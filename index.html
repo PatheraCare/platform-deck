@@ -244,6 +244,36 @@
     .screen { position: relative; height: 232px; overflow: hidden; }
     .screen img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transform-origin: top left; }
     .slide.active .screen img { animation: ken 14s ease-in-out infinite alternate; }
+
+    .slide.shot {
+      padding: 0; align-content: stretch;
+      grid-template-rows: auto 1fr;
+    }
+    .slide.shot .bg, .slide.shot .grid-lines { display: none; }
+    .shot-bar {
+      position: relative; z-index: 2;
+      padding: 16px 28px 12px;
+      background: linear-gradient(180deg, #fff 70%, rgba(255,255,255,.88));
+    }
+    .slide.shot h2 { max-width: none; font-size: clamp(1.15rem, 2.4vw, 1.55rem); margin: 0; }
+    .slide.shot .kicker { margin-bottom: 6px; }
+    .slide.shot .device {
+      opacity: 1; border: 0; border-radius: 0; box-shadow: none; height: 100%; min-height: 0;
+    }
+    .slide.active.shot .device { animation: none; }
+    .slide.shot .chrome, .slide.shot .glint { display: none; }
+    .slide.shot .screen { height: 100%; }
+    .slide.shot .screen img {
+      object-fit: contain; object-position: top center; background: #f1f5f9;
+    }
+    .slide.shot.active .screen img { animation: none; }
+
+    .stage:fullscreen, :fullscreen .stage { width: 100%; max-width: none; margin: 0; height: 100%; }
+    :fullscreen .deck, .stage:fullscreen .deck {
+      width: 100vw; height: calc(100vh - 58px); border-radius: 0; max-height: none;
+    }
+    :fullscreen .caption, .stage:fullscreen .caption { display: none; }
+    :fullscreen .controls, .stage:fullscreen .controls { margin: 8px 18px; }
     @keyframes ken { from { transform: scale(1); } to { transform: scale(1.07) translate(-1.5%, -1%); } }
     .screen .glint {
       position: absolute; top: 0; bottom: 0; width: 40%;
@@ -670,12 +700,12 @@
           <div class="avatar gn" aria-hidden="true">GN</div>
           <h3>Gaurav Nirola</h3>
           <div class="job">Co-founder · Platform, SRE &amp; HIPAA</div>
-          <p>Staff SRE lead at Paytronix. Owns Cloud Run, Terraform, the security scanner, and the dynamic forms engine. Production merge gate.</p>
+          <p>Senior DevOps / SRE at Maven AGI in Boston. Previously Staff SRE and team lead at Paytronix — Azure migration, Terraform, CI/CD. Owns Cloud Run, the HIPAA gate, and the forms engine.</p>
           <div class="tags">
-            <span class="tag">Cloud Run / IaC</span>
+            <span class="tag">Maven AGI</span>
+            <span class="tag">Azure / Terraform</span>
             <span class="tag">HIPAA scans</span>
             <span class="tag">Forms engine</span>
-            <span class="tag">CI gate</span>
           </div>
           <div class="own"><img src="motion/flow-arrow.gif" alt="" data-gif /> Owns cloud + trust</div>
         </article>
@@ -683,12 +713,12 @@
           <div class="avatar rj" aria-hidden="true">RJ</div>
           <h3>Ranjan Dahal</h3>
           <div class="job">Co-founder · Architecture, identity &amp; HR</div>
-          <p>Axon + Wayfair + U.S. Army Apache veteran. Architected identity, the portal, and workforce. Leads commercial conversations with agency directors.</p>
+          <p>Reliability Software Engineer at Axon. Previously Staff Engineer, Data &amp; ML Platforms at Wayfair. U.S. Army AH-64 Apache veteran and Northeastern Gordon Fellow — 4× Google Cloud Professional.</p>
           <div class="tags">
+            <span class="tag">Axon</span>
+            <span class="tag">Ex-Wayfair</span>
+            <span class="tag">Gordon Fellow</span>
             <span class="tag">pc-identity</span>
-            <span class="tag">pc-hr / EVV</span>
-            <span class="tag">Portal</span>
-            <span class="tag">RBAC</span>
           </div>
           <div class="own"><img src="motion/flow-arrow.gif" alt="" data-gif /> Owns identity + HR</div>
         </article>
@@ -767,69 +797,28 @@
       </div>
     </section>
 
-    <section class="slide" data-ms="8500" data-pose="nod" data-say="This is the chart." data-act="peek" data-targets=".device">
-      <div class="bg"></div>
-      <div class="split">
-        <div>
-          <p class="kicker">Care · Platform</p>
-          <h2>Eight capabilities. One secure home.</h2>
-          <p class="lead">Designed for residential and CPS workflows — not a generic checklist app.</p>
-          <p class="hook">Plus respite coverage: temporary login for backup providers with a ready-made client handover.</p>
+    <section class="slide shot" data-ms="8500" data-pose="nod" data-say="This is the chart." data-act="peek">
+      <div class="shot-bar">
+        <p class="kicker">Care · Platform</p>
+        <h2>The chart the DSP opens on shift</h2>
+      </div>
+      <figure class="device" data-build data-say="This is the chart.">
+        <div class="screen">
+          <img src="screens-1920/01-dashboard.png" alt="Current Care individual chart: Jamie Demo, Home, EVV, Log, Medications" />
         </div>
-        <figure class="device" data-build data-say="This is the chart.">
-          <div class="chrome"><i></i><i></i><i></i><b>care.patheracare.com</b></div>
-          <div class="screen">
-            <img src="screens-1920/01-dashboard.png" alt="Care dashboard with individuals and daily actions" />
-            <div class="glint"></div>
-          </div>
-        </figure>
-      </div>
-      <div class="feat-grid" style="margin-top:12px">
-        <article class="feat" data-build data-say="Give. Track. Print the month."><div class="ic">MAR</div><strong>Medication records</strong><p>Give, track, print monthly sheets.</p></article>
-        <article class="feat" data-build data-say="Log once. Report from the record."><div class="ic">LOG</div><strong>Daily logs</strong><p>CPS &amp; residential shift notes.</p></article>
-        <article class="feat" data-build data-say="Ask the team. Stay in the chart."><div class="ic">CHAT</div><strong>Direct team chat</strong><p>Ask the care team in-app.</p></article>
-        <article class="feat" data-build data-say="Ask He-M. With citations."><div class="ic">AI</div><strong>He-M advisor</strong><p>RAG answers from regulations.</p></article>
-      </div>
+      </figure>
     </section>
 
-    <section class="slide" data-ms="9000" data-pose="stamp" data-say="Watch the month fill itself." data-act="cycle" data-prop="stamp" data-scale="0.55" data-oy="-34">
-      <div class="bg"></div>
-      <div class="split">
-        <div>
-          <p class="kicker">Care · Medications <span class="badge-hot">Standout</span></p>
-          <h2>MARs that build themselves</h2>
-          <p class="lead">Log each administration with safety checks. Monthly sheets generate from real activity — not a blank grid filled in later.</p>
-          <ul class="checks">
-            <li data-build data-say="Regular, PRN, and controlled."><i>✓</i><span>Regular, PRN, and controlled medication flows</span></li>
-            <li data-build data-say="Nurse and guardian review paths."><i>✓</i><span>Nurse / guardian review paths for changes</span></li>
-            <li data-build data-say="The sheet is the activity."><i>✓</i><span>Printable monthly sheets from live data</span></li>
-          </ul>
-        </div>
-        <div>
-          <figure class="device" style="margin-bottom:10px">
-            <div class="chrome"><i></i><i></i><i></i><b>Meds · Give</b></div>
-            <div class="screen" style="height:168px">
-              <img src="screens-1920/04-medications.png" alt="Active medications in Care" />
-              <div class="glint"></div>
-            </div>
-          </figure>
-          <div class="mock" style="padding:12px" data-build data-say="Watch the month fill itself.">
-            <div class="mock-top"><div class="mock-title">Monthly MAR filling in</div><img src="motion/stamp-check.gif" width="28" height="28" alt="" data-gif /></div>
-            <div class="grid-mar">
-              <span class="h">Med</span><span class="h">1</span><span class="h">2</span><span class="h">3</span><span class="h">4</span><span class="h">5</span><span class="h">6</span><span class="h">7</span>
-              <span class="lab">Sertraline AM</span>
-              <span class="ok" style="animation-delay:.35s">✓</span><span class="ok" style="animation-delay:.5s">✓</span><span class="ok" style="animation-delay:.65s">✓</span>
-              <span class="ok" style="animation-delay:.8s">✓</span><span class="ok" style="animation-delay:.95s">✓</span><span class="ok" style="animation-delay:1.1s">✓</span><span></span>
-              <span class="lab">Metformin PM</span>
-              <span class="ok" style="animation-delay:.45s">✓</span><span class="ok" style="animation-delay:.6s">✓</span><span class="ok" style="animation-delay:.75s">✓</span>
-              <span class="ok" style="animation-delay:.9s">✓</span><span class="ok" style="animation-delay:1.05s">✓</span><span></span><span></span>
-              <span class="lab">PRN Acetaminophen</span>
-              <span></span><span class="ok" style="animation-delay:1.2s">1</span><span></span><span></span>
-              <span class="ok" style="animation-delay:1.4s">1</span><span></span><span></span>
-            </div>
-          </div>
-        </div>
+    <section class="slide shot" data-ms="9000" data-pose="stamp" data-say="Give. Track. The month fills itself." data-act="peek" data-prop="stamp">
+      <div class="shot-bar">
+        <p class="kicker">Care · Medications <span class="badge-hot">Standout</span></p>
+        <h2>Give from the chart. The MAR is the activity.</h2>
       </div>
+      <figure class="device" data-build data-say="Give. Track. The month fills itself.">
+        <div class="screen">
+          <img src="screens-1920/04-medications.png" alt="Current Care medications Give tab with scheduled and PRN doses" />
+        </div>
+      </figure>
     </section>
 
     <section class="slide" data-ms="8000" data-pose="point" data-say="Log once. Report from the record." data-act="cycle">
@@ -905,61 +894,28 @@
       </div>
     </section>
 
-    <section class="slide" data-ms="8500" data-pose="look" data-say="Ask He-M. Stay in the chart." data-act="peek" data-targets=".device">
-      <div class="bg"></div>
-      <div class="split-rev">
-        <figure class="device" data-build data-say="Ask He-M. Stay in the chart.">
-          <div class="chrome"><i></i><i></i><i></i><b>He-M advisor · live</b></div>
-          <div class="screen">
-            <img src="screens-1920/07-advisor.png" alt="He-M regulatory advisor in Care" />
-            <div class="glint"></div>
-          </div>
-        </figure>
-        <div>
-          <p class="kicker">Care · Team &amp; advisor</p>
-          <h2>Ask the team. Ask He-M. Stay in the chart.</h2>
-          <p class="lead">Messages stay with the individual. The advisor searches curated He-M guidance and answers with citations — not random internet chat.</p>
-          <ul class="checks">
-            <li data-build data-say="Messages stay with the individual."><i>✓</i><span>In-app care team messaging + file share</span></li>
-            <li data-build data-say="Answers with citations. Not the internet."><i>✓</i><span>RAG answers tied to source material</span></li>
-            <li data-build data-say="BAA-covered infrastructure."><i>✓</i><span>Runs on BAA-covered infrastructure</span></li>
-          </ul>
-        </div>
+    <section class="slide shot" data-ms="8500" data-pose="look" data-say="Ask He-M. Stay in the chart." data-act="peek">
+      <div class="shot-bar">
+        <p class="kicker">Care · Team &amp; advisor</p>
+        <h2>Ask He-M. Stay in Care — not the open internet.</h2>
       </div>
+      <figure class="device" data-build data-say="Ask He-M. Stay in the chart.">
+        <div class="screen">
+          <img src="screens-1920/07-advisor.png" alt="Current PatheraCare He-M regulatory advisor" />
+        </div>
+      </figure>
     </section>
 
-    <section class="slide" data-ms="13000" data-pose="stamp" data-say="QA already sees next month." data-act="cycle" data-prop="glass" data-oy="-40">
-      <div class="bg"></div>
-      <div class="split">
-        <div>
-          <p class="kicker">Agency · Management <span class="badge-hot">Always ahead</span></p>
-          <h2>A QA compliance desk that opens items before they’re late</h2>
-          <p class="lead">Agency owner and QA share one sidenav. It does not correct the file — it reads a stored date, opens the item in the lead window, and sends it to the person who can fix it.</p>
-          <div class="feat-grid" style="grid-template-columns:1fr 1fr;margin-top:12px">
-            <article class="feat" style="min-height:auto" data-build data-say="Late now. This week. This month."><div class="ic qa">QA</div><strong>Compliance desk</strong><p>Late now, this week, this month — not each missed dose.</p></article>
-            <article class="feat" style="min-height:auto" data-build data-say="PM and nurse keep their own queues."><div class="ic">OPS</div><strong>Operations desk</strong><p>Program manager and nurse keep their own queues.</p></article>
-            <article class="feat" style="min-height:auto" data-build data-say="Assign in-app. Recheck closes it."><div class="ic">SEND</div><strong>In-app assign</strong><p>Provider, PM, or nurse trainer. Recheck closes it.</p></article>
-            <article class="feat" style="min-height:auto" data-build data-say="You set the lead days."><div class="ic">RULE</div><strong>Agency deadlines</strong><p>Lead days, TB, DMV, household stay — you set them.</p></article>
-          </div>
-        </div>
-        <div class="mock">
-          <div class="mock-top"><div class="mock-title">QA compliance desk</div><span class="mock-chip">Live checks</span></div>
-          <div class="qa-lane">
-            <span class="on">Now · late</span>
-            <span class="on">This week</span>
-            <span class="on">This month</span>
-          </div>
-          <div class="ahead" aria-hidden="true"><i></i></div>
-          <div class="qa-queue">
-            <div class="qa-item" data-build data-say="Fire drill. Not reviewed. Now."><span class="when now">Now</span><span>Fire drill · House 12 — not reviewed</span><b>→ PM</b></div>
-            <div class="qa-item" data-build data-say="Insurance is inside the lead."><span class="when now">Now</span><span>Car insurance · inside 60-day lead</span><b>→ DSP</b></div>
-            <div class="qa-item" data-build data-say="Weekly CPS. Goal not followed."><span class="when week">Week</span><span>Weekly CPS · goal not followed</span><b>→ PM</b></div>
-            <div class="qa-item" data-build data-say="Clock exceptions this week."><span class="when week">Week</span><span>Weekly time · clock exceptions</span><b>→ PM</b></div>
-            <div class="qa-item" data-build data-say="CPR. Thirty-two days out."><span class="when month">Month</span><span>CPR · 32 days to expiry</span><b>→ DSP</b></div>
-          </div>
-          <p class="tiny" style="opacity:1;margin-top:8px">Also on this desk: TB, DCYF, DMV, household background, homeowners / renters / condo, group home license, incidents, mileage, training, state inspection — twenty-plus workflows, one queue.</p>
-        </div>
+    <section class="slide shot" data-ms="9500" data-pose="stamp" data-say="QA already sees next month." data-act="peek" data-prop="glass">
+      <div class="shot-bar">
+        <p class="kicker">Agency · Management <span class="badge-hot">Always ahead</span></p>
+        <h2>The QA desk opens the item before it’s late</h2>
       </div>
+      <figure class="device" data-build data-say="QA already sees next month.">
+        <div class="screen">
+          <img src="screens-1920/08-qa-desk.png" alt="Current Care QA compliance desk with send-what-is-late queue" />
+        </div>
+      </figure>
     </section>
 
     <section class="slide" data-ms="12000" data-pose="cheer" data-say="Punch. Time. Pay." data-act="cycle" data-prop="clock">
@@ -1155,7 +1111,7 @@
       <div class="bg"></div>
       <p class="kicker"><img src="motion/live-dot.gif" alt="" data-gif /> Next step</p>
       <h2>See it. Try it. Stress-test it with your team.</h2>
-      <p class="lead">Walk MAR, EVV, and a He-M certificate in one sitting — then decide. Space to play, arrows to step one idea at a time.</p>
+      <p class="lead">Walk MAR, EVV, and a He-M certificate in one sitting — then decide. F for full screen, Space to play, arrows to step one idea at a time.</p>
       <div class="cta-box">
         <a class="cta cta--primary" data-build data-say="Bring two people. We'll show you." href="mailto:hello@patheracare.com?subject=PatheraCare%20try%20%26%20test%20request">Request try &amp; test access</a>
         <a class="cta cta--ghost" href="https://care.patheracare.com/login">Sign in to Care</a>
@@ -1223,7 +1179,7 @@
     </div>
   </aside>
   </div>
-  <p class="caption">Space play/pause · Arrows step one idea at a time (then the next slide) · Character points at the live beat.</p>
+  <p class="caption">F full screen · Space play/pause · Arrows step one idea at a time · Character points at the live beat.</p>
 
   <script>
     const slides = [...document.querySelectorAll(".slide")];
@@ -1456,6 +1412,11 @@
       if (e.code === "Space") { e.preventDefault(); toggle(); }
       else if (e.code === "ArrowRight") nextBtn.click();
       else if (e.code === "ArrowLeft") prevBtn.click();
+      else if (e.key === "f" || e.key === "F") {
+        e.preventDefault();
+        if (!document.fullscreenElement) stageEl.requestFullscreen?.();
+        else document.exitFullscreen?.();
+      }
       else if (e.code === "Escape") { playing = false; playBtn.textContent = "▶"; }
     });
     show(0); requestAnimationFrame(tick);

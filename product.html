@@ -268,12 +268,24 @@
     }
     .slide.shot.active .screen img { animation: none; }
 
-    .stage:fullscreen, :fullscreen .stage { width: 100%; max-width: none; margin: 0; height: 100%; }
-    :fullscreen .deck, .stage:fullscreen .deck {
-      width: 100vw; height: calc(100vh - 58px); border-radius: 0; max-height: none;
+    .stage:fullscreen, .stage:-webkit-full-screen,
+    :fullscreen .stage, :-webkit-full-screen .stage,
+    html.present .stage {
+      width: 100%; max-width: none; margin: 0; height: 100%;
+      background: #070b14; display: flex; flex-direction: column;
     }
-    :fullscreen .caption, .stage:fullscreen .caption { display: none; }
-    :fullscreen .controls, .stage:fullscreen .controls { margin: 8px 18px; }
+    :fullscreen .deck, :-webkit-full-screen .deck,
+    .stage:fullscreen .deck, .stage:-webkit-full-screen .deck,
+    html.present .deck {
+      width: 100%; flex: 1; height: auto; border-radius: 0; max-height: none;
+    }
+    :fullscreen .caption, :-webkit-full-screen .caption,
+    .stage:fullscreen .caption, html.present .caption { display: none; }
+    :fullscreen .controls, :-webkit-full-screen .controls,
+    .stage:fullscreen .controls, html.present .controls { margin: 8px 18px; }
+    html.present, html.present body { height: 100%; overflow: hidden; }
+    .ghost.fs { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .ghost.fs:hover { background: var(--teal-dark); }
     @keyframes ken { from { transform: scale(1); } to { transform: scale(1.07) translate(-1.5%, -1%); } }
     .screen .glint {
       position: absolute; top: 0; bottom: 0; width: 40%;
@@ -1085,6 +1097,7 @@
     <button class="ctrl" id="play" type="button" aria-label="Pause">❚❚</button>
     <button class="ghost" id="prev" type="button">Prev</button>
     <button class="ghost" id="next" type="button">Next</button>
+    <button class="ghost fs" id="fs" type="button" aria-label="Full screen">Full screen</button>
     <div class="progress" id="progress" title="Jump"><i id="bar"></i></div>
     <div class="meta" id="meta">1 / 21</div>
   </div>
@@ -1139,7 +1152,7 @@
     </div>
   </aside>
   </div>
-  <p class="caption"><a href="index.html">Decks</a> · Product introduction · F full screen · Space play/pause · Arrows step one idea at a time.</p>
+  <p class="caption"><a href="index.html">Decks</a> · Product introduction · Full screen button or F · Space play/pause · Arrows step.</p>
 
   <script>
     const slides = [...document.querySelectorAll(".slide")];
@@ -1154,6 +1167,7 @@
     const buddySay = document.getElementById("buddySay");
     const buddyMover = document.getElementById("buddyMover");
     const stageEl = document.getElementById("stage");
+    const fsBtn = document.getElementById("fs");
     let index = 0, playing = true, startedAt = performance.now(), elapsed = 0;
     let buddyTimer = 0, skateTimer = 0, buddySeq = 0, beat = 0;
     const duration = (i) => Number(slides[i].dataset.ms || 8000);
@@ -1357,7 +1371,32 @@
       if (playing) { startedAt = performance.now() - elapsed; playBtn.textContent = "❚❚"; playBtn.setAttribute("aria-label", "Pause"); }
       else { playBtn.textContent = "▶"; playBtn.setAttribute("aria-label", "Play"); }
     }
+    function fsEl() {
+      return document.fullscreenElement || document.webkitFullscreenElement;
+    }
+    function paintFs() {
+      const on = !!(fsEl() || document.documentElement.classList.contains("present"));
+      fsBtn.textContent = on ? "Exit full screen" : "Full screen";
+      fsBtn.setAttribute("aria-label", fsBtn.textContent);
+    }
+    function toggleFs() {
+      const on = fsEl();
+      const enter = stageEl.requestFullscreen || stageEl.webkitRequestFullscreen;
+      const exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (on) {
+        if (exit) exit.call(document).catch(() => document.documentElement.classList.remove("present"));
+        else document.documentElement.classList.remove("present");
+      } else if (enter) {
+        Promise.resolve(enter.call(stageEl)).catch(() => document.documentElement.classList.add("present"));
+      } else {
+        document.documentElement.classList.toggle("present");
+      }
+      setTimeout(paintFs, 80);
+    }
     playBtn.addEventListener("click", toggle);
+    fsBtn.addEventListener("click", toggleFs);
+    document.addEventListener("fullscreenchange", paintFs);
+    document.addEventListener("webkitfullscreenchange", paintFs);
     prevBtn.addEventListener("click", () => { playing = false; playBtn.textContent = "▶"; prevStep(); });
     nextBtn.addEventListener("click", () => { playing = false; playBtn.textContent = "▶"; nextStep(); });
     progress.addEventListener("click", (e) => {
@@ -1374,8 +1413,7 @@
       else if (e.code === "ArrowLeft") prevBtn.click();
       else if (e.key === "f" || e.key === "F") {
         e.preventDefault();
-        if (!document.fullscreenElement) stageEl.requestFullscreen?.();
-        else document.exitFullscreen?.();
+        toggleFs();
       }
       else if (e.code === "Escape") { playing = false; playBtn.textContent = "▶"; }
     });

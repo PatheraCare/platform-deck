@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PatheraCare — Platform presentation</title>
+  <meta name="description" content="PatheraCare live demo deck: Care, HR, LMS, one login — plus the founding team." />
+  <meta name="theme-color" content="#0e7490" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,550;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #475569;
+      --teal: #0e7490;
+      --teal-dark: #155e75;
+      --teal-soft: #e0f2fe;
+      --mint: #ccfbf1;
+      --sand: #f4fafb;
+      --line: #d5e3e8;
+      --white: #ffffff;
+      --amber: #f59e0b;
+      --hr: #7c3aed;
+      --lms: #c2410c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #070b14; color: var(--ink); font-family: "Source Sans 3", system-ui, sans-serif; }
+    button { font: inherit; }
+
+    .stage {
+      width: min(1200px, calc(100vw - 20px));
+      margin: 14px auto 0;
+      position: relative;
+    }
+    .deck {
+      width: 100%;
+      height: min(675px, calc(100vh - 96px));
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      background: var(--sand);
+      box-shadow: 0 30px 80px -40px rgba(0,0,0,.7);
+    }
+    .slide {
+      position: absolute; inset: 0; padding: 32px 40px 28px;
+      opacity: 0; pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity .7s cubic-bezier(.22,.8,.24,1), transform .7s cubic-bezier(.22,.8,.24,1);
+      display: grid; align-content: center;
+    }
+    .slide.active { opacity: 1; pointer-events: auto; transform: none; }
+    .slide.leaving { opacity: 0; transform: translateY(-8px); }
+
+    .bg {
+      position: absolute; inset: 0; z-index: 0; overflow: hidden;
+      background:
+        radial-gradient(920px 420px at 88% -8%, var(--teal-soft), transparent 58%),
+        radial-gradient(680px 360px at -5% 105%, #ecfdf5, transparent 52%),
+        var(--sand);
+    }
+    .bg::before, .bg::after {
+      content: ""; position: absolute; border-radius: 50%; filter: blur(2px);
+      animation: drift 14s ease-in-out infinite;
+    }
+    .bg::before { width: 280px; height: 280px; right: -40px; top: -60px; background: rgba(14,116,144,.12); }
+    .bg::after { width: 220px; height: 220px; left: -50px; bottom: -70px; background: rgba(124,58,237,.08); animation-delay: -5s; }
+    .grid-lines {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .18;
+      background-image:
+        linear-gradient(to right, #94a3b8 1px, transparent 1px),
+        linear-gradient(to bottom, #94a3b8 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 70% 30%, #000 20%, transparent 70%);
+    }
+    .orb {
+      position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(14,116,144,.35) 55%, transparent 70%);
+      animation: floaty 6s ease-in-out infinite;
+    }
+    .slide > *:not(.bg):not(.grid-lines):not(.orb) { position: relative; z-index: 1; }
+
+    .brand { font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: clamp(2.2rem, 4.6vw, 3.4rem); letter-spacing: -.03em; line-height: 1.05; opacity: 0; }
+    .brand span { color: var(--teal); }
+    .kicker, h2, .brand, .lead, .hook, .cta-box { justify-self: start; }
+    .kicker {
+      display: inline-flex; align-items: center; gap: 8px; width: max-content;
+      font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--teal-dark); background: var(--teal-soft); padding: 6px 12px; border-radius: 999px; margin-bottom: 12px;
+      opacity: 0; transform: translateY(8px);
+    }
+    .kicker img { width: 14px; height: 14px; }
+    .badge-hot {
+      display: inline-block; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: #7c2d12; background: #ffedd5; padding: 4px 10px; border-radius: 999px; margin-left: 8px;
+      animation: pulseGlow 1.8s ease-in-out infinite;
+    }
+    h2 {
+      font-family: Fraunces, Georgia, serif; font-size: clamp(1.5rem, 3vw, 2.25rem);
+      letter-spacing: -.02em; line-height: 1.12; max-width: 22ch; margin-bottom: 10px;
+      opacity: 0; transform: translateY(10px);
+    }
+    .lead { font-size: clamp(.98rem, 1.5vw, 1.16rem); color: var(--muted); line-height: 1.45; max-width: 46ch; opacity: 0; transform: translateY(10px); }
+    .slide.active .kicker { animation: up .4s .06s ease forwards; }
+    .slide.active h2, .slide.active .brand { animation: up .45s .14s ease forwards; }
+    .slide.active .lead { animation: up .45s .26s ease forwards; }
+
+    @keyframes up { to { opacity: 1; transform: none; } }
+    @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
+    @keyframes pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+    @keyframes spinSlow { to { transform: rotate(360deg); } }
+    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes drift { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-18px, 12px) scale(1.08); } }
+    @keyframes msgIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes dashRun { to { stroke-dashoffset: -120; } }
+    @keyframes travel { 0% { left: 0; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { left: calc(100% - 10px); opacity: 0; } }
+    @keyframes shine { from { transform: translateX(-120%); } to { transform: translateX(220%); } }
+    @keyframes stamp { from { opacity: 0; transform: scale(.3); } 70% { transform: scale(1.12); } to { opacity: 1; transform: none; } }
+    @keyframes shake { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-1.2deg); } 75% { transform: rotate(1.2deg); } }
+    @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,.45); } 50% { box-shadow: 0 0 0 6px rgba(245,158,11,0); } }
+    @keyframes typew { from { width: 0; } to { width: 100%; } }
+    @keyframes blink { 50% { border-color: transparent; } }
+    @keyframes ringPulse { 0% { transform: scale(.7); opacity: .6; } 100% { transform: scale(1.35); opacity: 0; } }
+    @keyframes fillBar { from { width: 0; } }
+    @keyframes doorSwing { from { transform: perspective(400px) rotateY(-50deg); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes march { to { background-position: 24px 0, 0 24px, -24px 0, 0 -24px; } }
+    @keyframes packetHop { 0% { offset-distance: 0%; } 100% { offset-distance: 100%; } }
+
+    .split { display: grid; grid-template-columns: 1.05fr .95fr; gap: 28px; align-items: center; }
+    .split-rev { display: grid; grid-template-columns: .95fr 1.05fr; gap: 28px; align-items: center; }
+    @media (max-width: 860px) {
+      .deck { height: auto; min-height: 580px; }
+      .slide { padding: 24px 18px; align-content: start; }
+      .split, .split-rev, .feat-grid, .roles, .shields, .people, .trio, .vs, .pipeline { grid-template-columns: 1fr !important; }
+      .arrow-track { width: 48px; margin: 4px auto; transform: rotate(90deg); }
+      .orbit-stage { margin: 12px auto 0; }
+      .controls { flex-wrap: wrap; }
+      .chapters { display: none; }
+    }
+
+    /* Orbiting product satellites */
+    .orbit-stage { position: relative; width: 100%; max-width: 440px; height: 340px; margin-left: auto; opacity: 0; }
+    .slide.active .orbit-stage { animation: pop .55s .28s ease forwards; }
+    .orbit-core {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: 118px; height: 118px; border-radius: 50%; background: #0f172a; color: #fff;
+      display: grid; place-items: center; text-align: center; z-index: 3;
+      box-shadow: 0 0 0 10px rgba(14,116,144,.12), 0 16px 40px -16px rgba(15,23,42,.55);
+    }
+    .orbit-core img { position: absolute; width: 118px; height: 118px; opacity: .95; }
+    .orbit-core b { position: relative; z-index: 1; font-family: Fraunces, Georgia, serif; font-size: .92rem; line-height: 1.15; }
+    .orbit-core b em { color: #67e8f9; font-style: normal; }
+    .ring {
+      position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 1.5px dashed #99f6e4;
+      transform: translate(-50%,-50%);
+    }
+    .ring.a { width: 236px; height: 236px; animation: spinSlow 28s linear infinite; }
+    .ring.b { width: 320px; height: 320px; border-color: #67e8f9; opacity: .45; animation: spinSlow 40s linear infinite reverse; }
+    .sat { position: absolute; inset: 28px; animation: spinSlow 22s linear infinite; }
+    .sat:nth-child(4) { animation-delay: -3.6s; }
+    .sat:nth-child(5) { animation-delay: -7.3s; }
+    .sat:nth-child(6) { animation-delay: -11s; }
+    .sat:nth-child(7) { animation-delay: -14.6s; }
+    .sat:nth-child(8) { animation-delay: -18.3s; }
+    .sat:nth-child(9) { animation-delay: -20.5s; }
+    .sat:nth-child(10) { animation-delay: -1.8s; }
+    .sat span {
+      position: absolute; left: 50%; top: 0; transform: translate(-50%,-50%);
+      background: #fff; border: 1px solid var(--line); border-radius: 999px;
+      padding: 6px 12px; font-size: .72rem; font-weight: 800; color: var(--teal-dark);
+      white-space: nowrap; box-shadow: 0 8px 18px -12px rgba(15,23,42,.45);
+      animation: spinSlow 22s linear infinite reverse;
+    }
+    .sat:nth-child(4) span { animation-delay: -3.6s; color: #155e75; }
+    .sat:nth-child(5) span { animation-delay: -7.3s; color: #6d28d9; border-color: #ddd6fe; }
+    .sat:nth-child(6) span { animation-delay: -11s; }
+    .sat:nth-child(7) span { animation-delay: -14.6s; color: #9a3412; border-color: #fed7aa; }
+    .sat:nth-child(8) span { animation-delay: -18.3s; }
+    .sat:nth-child(9) span { animation-delay: -20.5s; }
+    .sat:nth-child(10) span { animation-delay: -1.8s; color: #92400e; border-color: #fde68a; }
+
+    .feat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+    .feat {
+      background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 14px; opacity: 0; min-height: 108px;
+      position: relative; overflow: hidden; transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .feat::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.55) 48%, transparent 66%);
+      transform: translateX(-120%);
+    }
+    .slide.active .feat::after { animation: shine 2.8s .6s ease-in-out infinite; }
+    .slide.active .feat:nth-child(1) { animation: pop .35s .25s ease forwards; }
+    .slide.active .feat:nth-child(2) { animation: pop .35s .33s ease forwards; }
+    .slide.active .feat:nth-child(3) { animation: pop .35s .41s ease forwards; }
+    .slide.active .feat:nth-child(4) { animation: pop .35s .49s ease forwards; }
+    .slide.active .feat:nth-child(5) { animation: pop .35s .57s ease forwards; }
+    .slide.active .feat:nth-child(6) { animation: pop .35s .65s ease forwards; }
+    .slide.active .feat:nth-child(7) { animation: pop .35s .73s ease forwards; }
+    .slide.active .feat:nth-child(8) { animation: pop .35s .81s ease forwards; }
+    .feat .ic {
+      width: 32px; height: 32px; border-radius: 9px; background: var(--teal-soft); color: var(--teal-dark);
+      display: grid; place-items: center; font-weight: 800; font-size: .72rem; margin-bottom: 8px;
+    }
+    .feat .ic.hr { background: #ede9fe; color: #6d28d9; }
+    .feat .ic.lms { background: #ffedd5; color: #9a3412; }
+    .feat .ic.qa { background: #fef3c7; color: #92400e; }
+    .feat strong { display: block; font-family: Fraunces, Georgia, serif; font-size: .98rem; margin-bottom: 3px; }
+    .feat p { font-size: .8rem; color: var(--muted); line-height: 1.3; }
+
+    .mock {
+      background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 16px; opacity: 0;
+      box-shadow: 0 18px 40px -28px rgba(15,23,42,.35); position: relative; overflow: hidden;
+    }
+    .slide.active .mock { animation: pop .5s .32s ease forwards; }
+    .mock-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .mock-title { font-weight: 700; font-size: .92rem; }
+    .mock-chip { font-size: .68rem; font-weight: 700; color: var(--teal-dark); background: var(--mint); padding: 3px 8px; border-radius: 999px; }
+    .mock-chip.hr { color: #6d28d9; background: #ede9fe; }
+    .mock-chip.lms { color: #9a3412; background: #ffedd5; }
+    .grid-mar { display: grid; grid-template-columns: 1.2fr repeat(7, 1fr); gap: 4px; font-size: .65rem; }
+    .grid-mar span { background: var(--sand); border-radius: 4px; padding: 7px 4px; text-align: center; color: var(--muted); }
+    .grid-mar .h { background: var(--teal-soft); color: var(--teal-dark); font-weight: 700; }
+    .grid-mar .ok { background: #a7f3d0; color: #065f46; font-weight: 700; opacity: 0; }
+    .slide.active .grid-mar .ok { animation: stamp .28s ease forwards; }
+    .grid-mar .lab { text-align: left; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid var(--line); }
+
+    .device {
+      border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #fff;
+      box-shadow: 0 22px 50px -28px rgba(15,23,42,.5); opacity: 0; position: relative;
+    }
+    .slide.active .device { animation: pop .5s .3s ease forwards, floaty 5s 1s ease-in-out infinite; }
+    .chrome {
+      display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #f1f5f9; border-bottom: 1px solid var(--line);
+      font-size: .68rem; color: #64748b; font-weight: 650;
+    }
+    .chrome i { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; }
+    .chrome i:nth-child(1) { background: #f87171; }
+    .chrome i:nth-child(2) { background: #fbbf24; }
+    .chrome i:nth-child(3) { background: #34d399; }
+    .chrome b { margin-left: 8px; font-weight: 650; }
+    .screen { position: relative; height: 232px; overflow: hidden; }
+    .screen img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transform-origin: top left; }
+    .slide.active .screen img { animation: ken 14s ease-in-out infinite alternate; }
+    @keyframes ken { from { transform: scale(1); } to { transform: scale(1.07) translate(-1.5%, -1%); } }
+    .screen .glint {
+      position: absolute; top: 0; bottom: 0; width: 40%;
+      background: linear-gradient(105deg, transparent, rgba(255,255,255,.38), transparent);
+      animation: shine 3.4s 1s ease-in-out infinite;
+    }
+
+    .pipeline { display: grid; grid-template-columns: 1fr 72px 1fr 72px 1fr; gap: 0; align-items: center; margin-top: 18px; }
+    .node {
+      background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 16px 12px;
+      text-align: center; font-weight: 700; font-size: .9rem; opacity: 0; position: relative;
+    }
+    .node.hot { border-color: var(--teal); background: var(--teal-soft); box-shadow: 0 0 0 4px rgba(14,116,144,.12); }
+    .slide.active .node:nth-child(1) { animation: pop .35s .28s ease forwards; }
+    .slide.active .node:nth-child(3) { animation: pop .35s .55s ease forwards; }
+    .slide.active .node:nth-child(5) { animation: pop .35s .85s ease forwards; }
+    .arrow-track { position: relative; height: 28px; }
+    .arrow-track svg { width: 100%; height: 28px; display: block; overflow: visible; }
+    .arrow-track path {
+      fill: none; stroke: var(--teal); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+      stroke-dasharray: 90; stroke-dashoffset: 90;
+    }
+    .slide.active .arrow-track path { animation: draw .55s ease forwards, dashRun 1.4s .6s linear infinite; }
+    .packet {
+      position: absolute; top: 8px; width: 12px; height: 12px; border-radius: 50%;
+      background: var(--teal); box-shadow: 0 0 0 6px rgba(14,116,144,.18);
+      animation: travel 1.6s linear infinite; opacity: 0;
+    }
+    .slide.active .packet { opacity: 1; }
+
+    .chat { display: grid; gap: 8px; }
+    .bubble { max-width: 88%; padding: 10px 12px; border-radius: 14px; font-size: .84rem; line-height: 1.35; opacity: 0; }
+    .bubble.in { background: var(--teal-soft); color: var(--ink); border-bottom-left-radius: 4px; }
+    .bubble.out { background: var(--ink); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+    .bubble.file { background: #fff; border: 1px dashed var(--teal); color: var(--teal-dark); font-weight: 650; background-size: 16px 2px, 2px 16px, 16px 2px, 2px 16px; background-position: 0 0, 100% 0, 100% 100%, 0 100%; background-repeat: no-repeat; animation: none; }
+    .slide.active .bubble:nth-child(1) { animation: msgIn .4s .35s ease forwards; }
+    .slide.active .bubble:nth-child(2) { animation: msgIn .4s .7s ease forwards; }
+    .slide.active .bubble:nth-child(3) { animation: msgIn .4s 1.05s ease forwards; }
+    .typing { display: flex; gap: 4px; padding: 8px 0 0; }
+    .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: floaty .8s ease-in-out infinite; }
+    .typing i:nth-child(2) { animation-delay: .15s; }
+    .typing i:nth-child(3) { animation-delay: .3s; }
+
+    .voice-wave { display: flex; align-items: end; gap: 3px; height: 52px; margin: 12px 0; }
+    .voice-wave i { display: block; width: 5px; border-radius: 99px; background: linear-gradient(#67e8f9, var(--teal)); transform-origin: bottom; }
+    .slide.active .voice-wave i { animation: eq 1s ease-in-out infinite; }
+    @keyframes eq { 0%,100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+    .voice-wave i:nth-child(odd) { animation-duration: .7s; }
+    .voice-wave i:nth-child(3n) { animation-duration: 1.15s; }
+    .lang-pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: stretch; }
+    .lang-box { background: var(--sand); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: .82rem; }
+    .lang-box b { display: block; color: var(--teal-dark); font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+    .flow-gif { width: 72px; height: 28px; align-self: center; }
+    .typed { display: inline-block; overflow: hidden; white-space: nowrap; border-right: 2px solid var(--teal); width: 0; }
+    .slide.active .typed { animation: typew 2.2s .9s steps(28) forwards, blink .8s step-end infinite; }
+
+    .roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    .role { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; opacity: 0; position: relative; overflow: hidden; }
+    .slide.active .role:nth-child(1) { animation: pop .35s .28s ease forwards; }
+    .slide.active .role:nth-child(2) { animation: pop .35s .38s ease forwards; }
+    .slide.active .role:nth-child(3) { animation: pop .35s .48s ease forwards; }
+    .slide.active .role:nth-child(4) { animation: pop .35s .58s ease forwards; }
+    .slide.active .role:nth-child(5) { animation: pop .35s .68s ease forwards; }
+    .slide.active .role:nth-child(6) { animation: pop .35s .78s ease forwards; }
+    .role h3 { font-family: Fraunces, Georgia, serif; font-size: 1rem; margin-bottom: 3px; }
+    .role p { font-size: .8rem; color: var(--muted); line-height: 1.3; }
+    .pill { display: inline-block; font-size: .65rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--teal-dark); background: var(--teal-soft); padding: 3px 8px; border-radius: 999px; margin-bottom: 7px; }
+
+    .shields { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+    .shield { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; opacity: 0; min-height: 138px; }
+    .slide.active .shield { animation: pop .35s ease forwards; }
+    .slide.active .shield:nth-child(2) { animation-delay: .12s; }
+    .slide.active .shield:nth-child(3) { animation-delay: .24s; }
+    .slide.active .shield:nth-child(4) { animation-delay: .36s; }
+    .shield .ringn {
+      width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--teal);
+      display: grid; place-items: center; font-weight: 800; color: var(--teal-dark); font-size: .8rem; margin-bottom: 8px;
+      position: relative;
+    }
+    .shield .ringn::after {
+      content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid var(--teal); opacity: 0;
+    }
+    .slide.active .shield .ringn::after { animation: ringPulse 1.8s .5s ease-out infinite; }
+    .shield h3 { font-family: Fraunces, Georgia, serif; font-size: .95rem; margin-bottom: 4px; }
+    .shield p { font-size: .8rem; color: var(--muted); line-height: 1.3; }
+
+    .checks { list-style: none; display: grid; gap: 8px; margin-top: 12px; }
+    .checks li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; font-size: .92rem; color: var(--muted); opacity: 0; align-items: center; }
+    .checks li i { width: 22px; height: 22px; border-radius: 50%; background: var(--teal); color: #fff; display: grid; place-items: center; font-style: normal; font-size: .68rem; font-weight: 800; }
+    .slide.active .checks li:nth-child(1) { animation: pop .3s .3s ease forwards; }
+    .slide.active .checks li:nth-child(2) { animation: pop .3s .45s ease forwards; }
+    .slide.active .checks li:nth-child(3) { animation: pop .3s .6s ease forwards; }
+    .slide.active .checks li:nth-child(4) { animation: pop .3s .75s ease forwards; }
+
+    .cta-box { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; opacity: 0; }
+    .slide.active .cta-box { animation: up .4s .4s ease forwards; }
+    .cta { display: inline-flex; align-items: center; justify-content: center; padding: 12px 18px; border-radius: 999px; font-weight: 700; text-decoration: none; }
+    .cta--primary { background: var(--teal); color: #fff; box-shadow: 0 0 0 0 rgba(14,116,144,.4); animation: pulseGlow 2s ease-in-out infinite; }
+    .cta--ghost { background: #fff; color: var(--teal-dark); border: 1px solid var(--line); }
+
+    .tiny { margin-top: 12px; font-size: .76rem; color: #64748b; max-width: 54ch; opacity: 0; }
+    .slide.active .tiny { animation: up .35s .5s ease forwards; }
+    .hook {
+      margin-top: 14px; padding: 10px 12px; border-left: 3px solid var(--amber); background: #fffbeb;
+      font-size: .88rem; color: #92400e; font-weight: 650; max-width: 48ch; opacity: 0;
+    }
+    .slide.active .hook { animation: up .35s .42s ease forwards; }
+
+    .people { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+    .person {
+      background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 16px 16px 14px; opacity: 0;
+    }
+    .slide.active .person:nth-child(1) { animation: pop .4s .22s ease forwards; }
+    .slide.active .person:nth-child(2) { animation: pop .4s .34s ease forwards; }
+    .slide.active .person:nth-child(3) { animation: pop .4s .46s ease forwards; }
+    .avatar {
+      width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center;
+      font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: 1.15rem; color: #fff; margin-bottom: 12px;
+      position: relative;
+    }
+    .avatar::after {
+      content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid currentColor; opacity: .35;
+      animation: spinSlow 8s linear infinite;
+      border-top-color: transparent;
+    }
+    .avatar.rj { background: #0f172a; color: #67e8f9; }
+    .avatar.rv { background: #0e7490; color: #ecfeff; }
+    .avatar.gn { background: #5b21b6; color: #ede9fe; }
+    .person h3 { font-family: Fraunces, Georgia, serif; font-size: 1.18rem; line-height: 1.15; margin-bottom: 2px; }
+    .person .job { font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 8px; }
+    .person p { font-size: .8rem; color: var(--muted); line-height: 1.35; margin-bottom: 10px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag { font-size: .65rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: var(--sand); color: var(--ink); border: 1px solid var(--line); }
+    .own {
+      margin-top: 10px; display: flex; align-items: center; gap: 8px; font-size: .72rem; font-weight: 800; color: var(--teal-dark);
+    }
+    .own img { width: 56px; height: 20px; }
+
+    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+    .product {
+      background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px; opacity: 0; min-height: 210px; position: relative;
+    }
+    .slide.active .product:nth-child(1) { animation: pop .4s .24s ease forwards; }
+    .slide.active .product:nth-child(2) { animation: pop .4s .36s ease forwards; }
+    .slide.active .product:nth-child(3) { animation: pop .4s .48s ease forwards; }
+    .product .mark {
+      width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+      font-weight: 800; font-size: .78rem; margin-bottom: 10px;
+    }
+    .product.care .mark { background: var(--teal-soft); color: var(--teal-dark); }
+    .product.hr .mark { background: #ede9fe; color: #6d28d9; }
+    .product.lms .mark { background: #ffedd5; color: #9a3412; }
+    .product h3 { font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin-bottom: 4px; }
+    .product p { font-size: .84rem; color: var(--muted); line-height: 1.35; }
+    .product ul { list-style: none; margin-top: 10px; display: grid; gap: 4px; font-size: .78rem; color: var(--ink); font-weight: 650; }
+    .product ul li { display: grid; grid-template-columns: 16px 1fr; gap: 6px; align-items: center; }
+    .product ul li::before { content: "→"; color: var(--teal); font-weight: 800; }
+
+    .pay { display: grid; gap: 7px; }
+    .pay-row {
+      display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center;
+      background: var(--sand); border-radius: 10px; padding: 9px 10px; font-size: .8rem; opacity: 0;
+    }
+    .slide.active .pay-row { animation: msgIn .4s ease forwards; }
+    .slide.active .pay-row:nth-child(2) { animation-delay: .2s; }
+    .slide.active .pay-row:nth-child(3) { animation-delay: .4s; }
+    .slide.active .pay-row:nth-child(4) { animation-delay: .6s; }
+    .pay-row b { font-size: .72rem; color: #065f46; background: #a7f3d0; padding: 2px 8px; border-radius: 999px; }
+    .pay-row em { font-style: normal; color: var(--muted); font-size: .75rem; }
+
+    .cert { display: grid; gap: 8px; }
+    .cert-row {
+      display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
+      background: var(--sand); border-radius: 10px; padding: 10px; font-size: .8rem;
+    }
+    .bar { height: 6px; background: #e2e8f0; border-radius: 99px; margin-top: 6px; overflow: hidden; }
+    .bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ea580c, #f59e0b); border-radius: 99px; }
+    .slide.active .bar > i { animation: fillBar 1.2s .4s ease forwards; }
+    .cert-row strong { display: block; }
+    .cert-row span { color: var(--muted); font-size: .74rem; }
+    .okpill { font-size: .68rem; font-weight: 800; color: #065f46; background: #a7f3d0; padding: 3px 8px; border-radius: 999px; }
+
+    .vs { display: grid; grid-template-columns: 1fr 90px 1fr; gap: 10px; align-items: center; }
+    .messy { animation: shake 2.4s ease-in-out infinite; transform-origin: center; }
+    .messy .feat { border-color: #fecaca; background: #fff7ed; }
+    .calm .feat { border-color: #99f6e4; background: #f0fdfa; }
+    .vs-arrow { display: grid; place-items: center; gap: 6px; text-align: center; }
+    .vs-arrow strong { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--teal-dark); }
+
+    .dash-box {
+      border-radius: 16px; padding: 2px;
+      background: repeating-linear-gradient(90deg, var(--teal) 0 10px, transparent 10px 18px) 0 0 / 200% 2px no-repeat,
+                  repeating-linear-gradient(90deg, var(--teal) 0 10px, transparent 10px 18px) 0 100% / 200% 2px no-repeat,
+                  repeating-linear-gradient(0deg, var(--teal) 0 10px, transparent 10px 18px) 0 0 / 2px 200% no-repeat,
+                  repeating-linear-gradient(0deg, var(--teal) 0 10px, transparent 10px 18px) 100% 0 / 2px 200% no-repeat;
+      animation: march 1.2s linear infinite;
+    }
+    .dash-box > .inner { background: #fff; border-radius: 14px; padding: 14px; }
+
+    .geo-wrap { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .geo-wrap img { width: 72px; height: 72px; }
+    .doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+    .door { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; opacity: 0; transform-origin: left center; }
+    .slide.active .door { animation: doorSwing .55s ease forwards; }
+    .slide.active .door:nth-child(2) { animation-delay: .18s; }
+    .slide.active .door:nth-child(3) { animation-delay: .36s; }
+
+    .chapters {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      z-index: 4; display: grid; gap: 8px;
+    }
+    .chapters b {
+      width: 8px; height: 8px; border-radius: 99px; background: #cbd5e1; display: block;
+      transition: height .3s ease, background .3s ease;
+    }
+    .chapters b.on { height: 22px; background: var(--teal); }
+
+    .qa-lane { display: flex; gap: 8px; margin: 8px 0 12px; }
+    .qa-lane span {
+      flex: 1; text-align: center; font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+      padding: 6px 8px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--muted); opacity: 0;
+    }
+    .slide.active .qa-lane span { animation: pop .35s ease forwards; }
+    .slide.active .qa-lane span:nth-child(2) { animation-delay: .12s; }
+    .slide.active .qa-lane span:nth-child(3) { animation-delay: .24s; }
+    .qa-lane span.on { background: var(--mint); color: var(--teal-dark); border-color: #99f6e4; }
+    .ahead { height: 8px; background: #e2e8f0; border-radius: 99px; overflow: hidden; margin-bottom: 10px; }
+    .ahead > i { display: block; height: 100%; width: 86%; background: linear-gradient(90deg, var(--teal), #34d399); }
+    .slide.active .ahead > i { animation: fillBar 1.3s .25s ease forwards; }
+    .qa-queue { display: grid; gap: 7px; }
+    .qa-item {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center;
+      background: var(--sand); border-radius: 10px; padding: 8px 10px; font-size: .78rem; opacity: 0;
+    }
+    .slide.active .qa-item:nth-child(1) { animation: msgIn .35s .3s ease forwards; }
+    .slide.active .qa-item:nth-child(2) { animation: msgIn .35s .48s ease forwards; }
+    .slide.active .qa-item:nth-child(3) { animation: msgIn .35s .66s ease forwards; }
+    .slide.active .qa-item:nth-child(4) { animation: msgIn .35s .84s ease forwards; }
+    .slide.active .qa-item:nth-child(5) { animation: msgIn .35s 1.02s ease forwards; }
+    .qa-item .when { font-size: .62rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 7px; border-radius: 999px; }
+    .qa-item .when.now { background: #ffedd5; color: #9a3412; }
+    .qa-item .when.week { background: #ede9fe; color: #6d28d9; }
+    .qa-item .when.month { background: var(--mint); color: #065f46; }
+    .qa-item b { font-size: .68rem; color: var(--teal-dark); background: #fff; border: 1px solid var(--line); padding: 2px 8px; border-radius: 999px; }
+
+    .pre {
+      opacity: 0 !important; transform: translateY(18px) scale(.98);
+      filter: blur(4px); pointer-events: none; animation: none !important;
+      transition: opacity .55s cubic-bezier(.22,.8,.24,1), transform .55s cubic-bezier(.22,.8,.24,1), filter .45s ease, box-shadow .3s ease;
+    }
+    .onbeat {
+      opacity: 1 !important; transform: none; filter: none;
+    }
+    .dim {
+      opacity: .38 !important; transform: none; filter: grayscale(.15);
+    }
+    [data-build] {
+      transition: opacity .55s cubic-bezier(.22,.8,.24,1), transform .55s cubic-bezier(.22,.8,.24,1), filter .45s ease, box-shadow .3s ease;
+    }
+    .lit { box-shadow: 0 0 0 3px rgba(14,116,144,.45), 0 18px 40px -22px rgba(14,116,144,.4); transform: translateY(-3px); z-index: 2; }
+    .buddy-spark {
+      position: absolute; width: 9px; height: 9px; border-radius: 50%;
+      background: #f59e0b; z-index: 14; pointer-events: none;
+      animation: sparkOut .5s ease forwards;
+    }
+    @keyframes sparkOut { to { transform: scale(3); opacity: 0; } }
+
+    .buddy { position: absolute; inset: 0; z-index: 12; pointer-events: none; overflow: visible; }
+    .buddy-say {
+      position: absolute; background: #0f172a; color: #fff; font-size: .7rem; font-weight: 650; line-height: 1.3;
+      padding: 8px 10px; border-radius: 14px 14px 4px 14px; max-width: 150px;
+      opacity: 0; transform: translateY(8px) scale(.96); z-index: 15;
+    }
+    .buddy-say.on { animation: pop .35s ease forwards; }
+    .buddy-mover {
+      position: absolute; left: 72%; top: 58%; width: 96px; height: 108px;
+      transition: left .65s cubic-bezier(.22,.8,.24,1), top .65s cubic-bezier(.22,.8,.24,1), transform .45s ease;
+      will-change: left, top, transform;
+    }
+    .buddy-fig { width: 96px; height: 108px; }
+    .buddy-fig svg { width: 96px; height: 108px; display: block; overflow: visible; }
+    .buddy .lid { transform-origin: 38px 36px; animation: blink 4.2s ease-in-out infinite; }
+    .buddy .lid2 { transform-origin: 58px 36px; animation: blink 4.2s .2s ease-in-out infinite; }
+    .buddy .arm { transform-origin: 70px 62px; }
+    .buddy .prop { display: none; }
+    .buddy[data-prop="glass"] .prop-glass { display: block; animation: hop .7s ease-in-out infinite; }
+    .buddy[data-prop="stamp"] .prop-stamp { display: block; animation: stampArm .8s ease-in-out infinite; transform-origin: 84px 22px; }
+    .buddy[data-prop="clock"] .prop-clock { display: block; animation: hop .8s ease-in-out infinite; }
+    .buddy[data-prop="scan"] .prop-scan { display: block; }
+    .buddy[data-prop="scan"] .scan-beam { animation: scanBeam .9s linear infinite; }
+    .buddy[data-pose="wave"] .arm { animation: waveArm .7s ease-in-out infinite; }
+    .buddy[data-pose="point"] .arm { transform: rotate(-55deg); }
+    .buddy[data-pose="cheer"] .buddy-fig { animation: hop .55s ease-in-out infinite; }
+    .buddy[data-pose="cheer"] .arm { animation: waveArm .45s ease-in-out infinite; }
+    .buddy[data-pose="look"] .pupil { animation: lookAround 2.6s ease-in-out infinite; }
+    .buddy[data-pose="stamp"] .arm { animation: stampArm .85s ease-in-out infinite; }
+    .buddy[data-pose="nod"] .head { animation: nod .9s ease-in-out infinite; transform-origin: 48px 58px; }
+    .buddy-mover.walking .buddy-fig { animation: walkWobble .32s linear infinite; }
+    .buddy-mover.walking .foot.l { animation: step .28s infinite; }
+    .buddy-mover.walking .foot.r { animation: step .28s .14s infinite; }
+    .buddy-mover.flip .buddy-fig { transform: scaleX(-1); }
+    .buddy-mover.orbiting {
+      transition: none;
+      animation: buddyOrbit 16s linear infinite;
+    }
+    .buddy-mover.singing .buddy-fig { animation: hop .35s ease-in-out infinite; }
+    @keyframes blink { 0%, 86%, 100% { transform: scaleY(1); } 90% { transform: scaleY(.08); } }
+    @keyframes waveArm { 0%,100% { transform: rotate(12deg); } 50% { transform: rotate(-28deg); } }
+    @keyframes hop { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+    @keyframes lookAround { 0%,100% { transform: translate(0,0); } 40% { transform: translate(3px,-1px); } 70% { transform: translate(-3px,1px); } }
+    @keyframes stampArm { 0%,100% { transform: rotate(10deg); } 40% { transform: rotate(-50deg); } }
+    @keyframes nod { 0%,100% { transform: rotate(0); } 50% { transform: rotate(8deg); } }
+    @keyframes walkWobble { 0%,100% { transform: rotate(-7deg) translateY(0); } 50% { transform: rotate(7deg) translateY(-5px); } }
+    @keyframes step { 50% { transform: translateY(-4px); } }
+    @keyframes buddyOrbit {
+      from { transform: rotate(0deg) translateX(124px) rotate(0deg) scale(.52); }
+      to { transform: rotate(360deg) translateX(124px) rotate(-360deg) scale(.52); }
+    }
+    @keyframes scanBeam { 0% { transform: translateY(-6px); } 100% { transform: translateY(10px); } }
+
+    .controls {
+      width: 100%; margin: 10px 0 8px;
+      display: flex; align-items: center; gap: 10px; color: #cbd5e1;
+    }
+    .ctrl { width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--teal); color: #fff; cursor: pointer; font-weight: 700; }
+    .ctrl:hover { background: var(--teal-dark); }
+    .ghost { height: 34px; border-radius: 999px; border: 1px solid #334155; background: transparent; color: #cbd5e1; padding: 0 12px; cursor: pointer; font-size: .82rem; font-weight: 600; }
+    .progress { flex: 1; height: 6px; background: #1e293b; border-radius: 99px; overflow: hidden; cursor: pointer; }
+    .progress > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--teal), #67e8f9); transition: width .08s linear; }
+    .meta { min-width: 72px; text-align: right; font-size: .82rem; color: #94a3b8; }
+    .caption { width: min(1200px, calc(100vw - 20px)); margin: 0 auto 14px; color: #64748b; font-size: .78rem; }
+
+    @media (max-width: 860px) {
+      .buddy-mover { transform: scale(.7); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .sat, .ring, .feat::after, .packet, .voice-wave i, .orbit-core img, .buddy .arm, .buddy .lid, .buddy-fig, .buddy-mover, .screen img { animation: none !important; transition: none !important; }
+      .slide { filter: none; transform: none; opacity: 0; }
+      .slide.active { opacity: 1; }
+      .pre { filter: none; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+  <div class="deck" id="deck" aria-live="polite">
+    <nav class="chapters" id="chapters" aria-hidden="true">
+      <b data-upto="1" class="on"></b>
+      <b data-upto="3"></b>
+      <b data-upto="11"></b>
+      <b data-upto="13"></b>
+      <b data-upto="15"></b>
+      <b data-upto="20"></b>
+    </nav>
+
+    <section class="slide active" data-ms="8000" data-pose="wave" data-say="Hi. One login for the whole agency." data-act="orbit">
+      <div class="bg"></div>
+      <div class="grid-lines"></div>
+      <div class="split">
+        <div>
+          <p class="kicker"><img src="motion/live-dot.gif" alt="" data-gif /> Agency demo · Care · HR · LMS</p>
+          <h1 class="brand">Pathera<span>Care</span></h1>
+          <p class="lead" style="margin-top:14px">One login for the agency: clinical care, workforce &amp; payroll, and DSP training — built for New Hampshire residential and CPS teams.</p>
+          <p class="hook">Medications, EVV clock-in, and He-M 1201 certificates in the same trust boundary. Not three vendors glued together.</p>
+        </div>
+        <div class="orbit-stage" data-build data-say="Care. HR. LMS. Same login." aria-hidden="true">
+          <div class="ring a"></div>
+          <div class="ring b"></div>
+          <div class="orbit-core">
+            <img src="spin-accent.gif" alt="" data-gif />
+            <b>Pathera<br><em>Care</em></b>
+          </div>
+          <div class="sat"><span>MAR</span></div>
+          <div class="sat"><span>Daily logs</span></div>
+          <div class="sat"><span>HR · EVV</span></div>
+          <div class="sat"><span>Identity</span></div>
+          <div class="sat"><span>LMS · He-M</span></div>
+          <div class="sat"><span>Voice</span></div>
+          <div class="sat"><span>QA desk</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="10000" data-pose="point" data-say="People, then the product. Let's walk." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">Agenda</p>
+      <h2>What we’ll walk in this room</h2>
+      <p class="lead">People, then product. Care on the floor, the agency desk, HR on the clock, LMS in front of a surveyor.</p>
+      <div class="pipeline" style="margin-top:22px">
+        <div class="node" data-build data-say="Meet the people who built it.">01 · Team</div>
+        <div class="arrow-track"><svg viewBox="0 0 72 24"><path d="M4 12 H54 L46 6 M54 12 L46 18"/></svg><i class="packet"></i></div>
+        <div class="node hot" data-build data-say="Then the chart and the QA desk.">02 · Care + agency</div>
+        <div class="arrow-track"><svg viewBox="0 0 72 24"><path d="M4 12 H54 L46 6 M54 12 L46 18"/></svg><i class="packet" style="animation-delay:.4s"></i></div>
+        <div class="node" data-build data-say="Then the clock and the certificate.">03 · HR + LMS</div>
+      </div>
+      <div class="roles" style="grid-template-columns:repeat(5,1fr);margin-top:18px">
+        <article class="role" data-build data-say="Three people. One room."><span class="pill">Founders</span><h3>Who built it</h3><p>Clinical, cloud, and commercial — the three people in the room.</p></article>
+        <article class="role" data-build data-say="The chart first."><span class="pill">Care</span><h3>The chart</h3><p>MAR, logs, voice, respite, He-M advisor.</p></article>
+        <article class="role" data-build data-say="The desk that stays ahead of dates."><span class="pill">Agency</span><h3>The desk</h3><p>Houses, staff, forms, QA compliance.</p></article>
+        <article class="role" data-build data-say="Punch. Time. Pay."><span class="pill">HR</span><h3>The clock</h3><p>EVV punch, 8/80, NACHA export.</p></article>
+        <article class="role" data-build data-say="Proof a surveyor can scan."><span class="pill">LMS</span><h3>The proof</h3><p>He-M 1201, QR certs, nurse sign-off.</p></article>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="11000" data-pose="wave" data-say="The three people in the room." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">Founders</p>
+      <h2>The three people in the room</h2>
+      <div class="people">
+        <article class="person" data-build data-say="The workflows DSPs actually use.">
+          <div class="avatar rv" aria-hidden="true">RV</div>
+          <h3>Ravi Dahal</h3>
+          <div class="job">Co-founder · Clinical product &amp; LMS</div>
+          <p>Direct-support provider at The Arc / Ark. Writes the workflows DSPs actually use on shift — MARs, NH state forms, CPS notes, and the He-M advisor.</p>
+          <div class="tags">
+            <span class="tag">Medication / MAR</span>
+            <span class="tag">NH CSNI forms</span>
+            <span class="tag">pc-lms</span>
+            <span class="tag">AI advisor</span>
+          </div>
+          <div class="own"><img src="motion/flow-arrow.gif" alt="" data-gif /> Owns Care + LMS</div>
+        </article>
+        <article class="person" data-build data-say="The cloud that keeps it standing.">
+          <div class="avatar gn" aria-hidden="true">GN</div>
+          <h3>Gaurav Nirola</h3>
+          <div class="job">Co-founder · Platform, SRE &amp; HIPAA</div>
+          <p>Staff SRE lead at Paytronix. Owns Cloud Run, Terraform, the security scanner, and the dynamic forms engine. Production merge gate.</p>
+          <div class="tags">
+            <span class="tag">Cloud Run / IaC</span>
+            <span class="tag">HIPAA scans</span>
+            <span class="tag">Forms engine</span>
+            <span class="tag">CI gate</span>
+          </div>
+          <div class="own"><img src="motion/flow-arrow.gif" alt="" data-gif /> Owns cloud + trust</div>
+        </article>
+        <article class="person" data-build data-say="The doors and the commercial.">
+          <div class="avatar rj" aria-hidden="true">RJ</div>
+          <h3>Ranjan Dahal</h3>
+          <div class="job">Co-founder · Architecture, identity &amp; HR</div>
+          <p>Axon + Wayfair + U.S. Army Apache veteran. Architected identity, the portal, and workforce. Leads commercial conversations with agency directors.</p>
+          <div class="tags">
+            <span class="tag">pc-identity</span>
+            <span class="tag">pc-hr / EVV</span>
+            <span class="tag">Portal</span>
+            <span class="tag">RBAC</span>
+          </div>
+          <div class="own"><img src="motion/flow-arrow.gif" alt="" data-gif /> Owns identity + HR</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="8000" data-pose="look" data-say="Paper doesn't survive a survey." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">Why teams switch</p>
+      <h2>Paper, texts, and guesswork don’t scale</h2>
+      <p class="lead">When an auditor asks, the trail is hard to find. We replace the scramble with one living system.</p>
+      <div class="vs" style="margin-top:16px">
+        <div class="messy" data-build data-say="Paper doesn't survive a survey.">
+          <div class="feat-grid" style="grid-template-columns:1fr 1fr;margin:0">
+            <div class="feat" style="min-height:auto"><strong>Binders</strong><p>MARs on paper</p></div>
+            <div class="feat" style="min-height:auto"><strong>SMS threads</strong><p>Care questions lost</p></div>
+            <div class="feat" style="min-height:auto"><strong>Spreadsheet pay</strong><p>8/80 overtime by hand</p></div>
+            <div class="feat" style="min-height:auto"><strong>PDF certificates</strong><p>Surveyor cannot verify</p></div>
+          </div>
+        </div>
+        <div class="vs-arrow" data-build data-say="One system. Not four vendors.">
+          <img src="motion/flow-arrow.gif" width="88" height="32" alt="" data-gif />
+          <strong>One system</strong>
+          <img src="motion/chevron-down.gif" width="32" height="40" alt="" data-gif style="transform:rotate(-90deg)" />
+        </div>
+        <div class="calm" data-build data-say="This is what could be.">
+          <div class="feat-grid" style="grid-template-columns:1fr 1fr;margin:0">
+            <div class="feat" style="min-height:auto"><strong>Live MAR</strong><p>Dose → monthly sheet</p></div>
+            <div class="feat" style="min-height:auto"><strong>In-app chat</strong><p>Tied to the individual</p></div>
+            <div class="feat" style="min-height:auto"><strong>EVV → ACH</strong><p>Punch to bank file</p></div>
+            <div class="feat" style="min-height:auto"><strong>QR certificate</strong><p>Scan. Live record.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="9000" data-pose="point" data-say="Care. HR. LMS. Same door." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">Platform</p>
+      <h2>Three products. One identity.</h2>
+      <p class="lead">A DSP clocks in, opens a chart, and keeps a live He-M certificate — same login, same agency, same permission grammar.</p>
+      <div class="trio">
+        <article class="product care" data-build data-say="The chart. The dose. The note.">
+          <div class="mark">CARE</div>
+          <h3>Clinical Care</h3>
+          <p>Residential &amp; CPS day — the chart, the dose, the note.</p>
+          <ul>
+            <li>eMAR / PRN / controlled</li>
+            <li>Daily logs &amp; reports</li>
+            <li>Respite handover</li>
+            <li>He-M AI advisor</li>
+          </ul>
+        </article>
+        <article class="product hr" data-build data-say="Clock. Time. Bank file.">
+          <div class="mark">HR</div>
+          <h3>Workforce &amp; payroll</h3>
+          <p>Clock, time, leave, and a bank-ready pay file.</p>
+          <ul>
+            <li>EVV punch + geofence</li>
+            <li>Timesheets &amp; 8/80 OT</li>
+            <li>Sleep-shift rates</li>
+            <li>NACHA ACH export</li>
+          </ul>
+        </article>
+        <article class="product lms" data-build data-say="Proof a surveyor can scan.">
+          <div class="mark">LMS</div>
+          <h3>Training academy</h3>
+          <p>Prove the DSP actually took the course.</p>
+          <ul>
+            <li>NH He-M 1201 modules</li>
+            <li>Anti-cheat telemetry</li>
+            <li>QR certificates</li>
+            <li>Nurse trainer sign-off</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="8500" data-pose="nod" data-say="This is the chart." data-act="peek" data-targets=".device">
+      <div class="bg"></div>
+      <div class="split">
+        <div>
+          <p class="kicker">Care · Platform</p>
+          <h2>Eight capabilities. One secure home.</h2>
+          <p class="lead">Designed for residential and CPS workflows — not a generic checklist app.</p>
+          <p class="hook">Plus respite coverage: temporary login for backup providers with a ready-made client handover.</p>
+        </div>
+        <figure class="device" data-build data-say="This is the chart.">
+          <div class="chrome"><i></i><i></i><i></i><b>care.patheracare.com</b></div>
+          <div class="screen">
+            <img src="screens-1920/01-dashboard.png" alt="Care dashboard with individuals and daily actions" />
+            <div class="glint"></div>
+          </div>
+        </figure>
+      </div>
+      <div class="feat-grid" style="margin-top:12px">
+        <article class="feat" data-build data-say="Give. Track. Print the month."><div class="ic">MAR</div><strong>Medication records</strong><p>Give, track, print monthly sheets.</p></article>
+        <article class="feat" data-build data-say="Log once. Report from the record."><div class="ic">LOG</div><strong>Daily logs</strong><p>CPS &amp; residential shift notes.</p></article>
+        <article class="feat" data-build data-say="Ask the team. Stay in the chart."><div class="ic">CHAT</div><strong>Direct team chat</strong><p>Ask the care team in-app.</p></article>
+        <article class="feat" data-build data-say="Ask He-M. With citations."><div class="ic">AI</div><strong>He-M advisor</strong><p>RAG answers from regulations.</p></article>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="9000" data-pose="stamp" data-say="Watch the month fill itself." data-act="cycle" data-prop="stamp" data-scale="0.55" data-oy="-34">
+      <div class="bg"></div>
+      <div class="split">
+        <div>
+          <p class="kicker">Care · Medications <span class="badge-hot">Standout</span></p>
+          <h2>MARs that build themselves</h2>
+          <p class="lead">Log each administration with safety checks. Monthly sheets generate from real activity — not a blank grid filled in later.</p>
+          <ul class="checks">
+            <li data-build data-say="Regular, PRN, and controlled."><i>✓</i><span>Regular, PRN, and controlled medication flows</span></li>
+            <li data-build data-say="Nurse and guardian review paths."><i>✓</i><span>Nurse / guardian review paths for changes</span></li>
+            <li data-build data-say="The sheet is the activity."><i>✓</i><span>Printable monthly sheets from live data</span></li>
+          </ul>
+        </div>
+        <div>
+          <figure class="device" style="margin-bottom:10px">
+            <div class="chrome"><i></i><i></i><i></i><b>Meds · Give</b></div>
+            <div class="screen" style="height:168px">
+              <img src="screens-1920/04-medications.png" alt="Active medications in Care" />
+              <div class="glint"></div>
+            </div>
+          </figure>
+          <div class="mock" style="padding:12px" data-build data-say="Watch the month fill itself.">
+            <div class="mock-top"><div class="mock-title">Monthly MAR filling in</div><img src="motion/stamp-check.gif" width="28" height="28" alt="" data-gif /></div>
+            <div class="grid-mar">
+              <span class="h">Med</span><span class="h">1</span><span class="h">2</span><span class="h">3</span><span class="h">4</span><span class="h">5</span><span class="h">6</span><span class="h">7</span>
+              <span class="lab">Sertraline AM</span>
+              <span class="ok" style="animation-delay:.35s">✓</span><span class="ok" style="animation-delay:.5s">✓</span><span class="ok" style="animation-delay:.65s">✓</span>
+              <span class="ok" style="animation-delay:.8s">✓</span><span class="ok" style="animation-delay:.95s">✓</span><span class="ok" style="animation-delay:1.1s">✓</span><span></span>
+              <span class="lab">Metformin PM</span>
+              <span class="ok" style="animation-delay:.45s">✓</span><span class="ok" style="animation-delay:.6s">✓</span><span class="ok" style="animation-delay:.75s">✓</span>
+              <span class="ok" style="animation-delay:.9s">✓</span><span class="ok" style="animation-delay:1.05s">✓</span><span></span><span></span>
+              <span class="lab">PRN Acetaminophen</span>
+              <span></span><span class="ok" style="animation-delay:1.2s">1</span><span></span><span></span>
+              <span class="ok" style="animation-delay:1.4s">1</span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="8000" data-pose="point" data-say="Log once. Report from the record." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">Care · Daily logs</p>
+      <h2>CPS &amp; residential notes that become reports</h2>
+      <p class="lead">Capture the shift in structured fields. Goal progress stays attached to the individual — then compile without retyping.</p>
+      <div class="pipeline">
+        <div class="node" data-build data-say="Capture the shift.">On-shift log</div>
+        <div class="arrow-track"><svg viewBox="0 0 72 24"><path d="M4 12 H54 L46 6 M54 12 L46 18"/></svg><i class="packet"></i></div>
+        <div class="node hot" data-build data-say="Goals stay on the individual.">Goals &amp; notes saved</div>
+        <div class="arrow-track"><svg viewBox="0 0 72 24"><path d="M4 12 H54 L46 6 M54 12 L46 18"/></svg><i class="packet" style="animation-delay:.5s"></i></div>
+        <div class="node" data-build data-say="Report from the record. Don't retype.">Weekly / monthly report</div>
+      </div>
+      <p class="hook">Stop rewriting the same week three times. Log once — report from the record.</p>
+    </section>
+
+    <section class="slide" data-ms="9000" data-pose="look" data-say="Speak Nepali. Save English." data-act="sing">
+      <div class="bg"></div>
+      <div class="split">
+        <div>
+          <p class="kicker">Care · Voice <span class="badge-hot">Nepali today</span></p>
+          <h2>Speak in your language. Save clear English logs.</h2>
+          <p class="lead">Caregivers capture notes by voice and have them translated for supervisors and auditors — without forcing field staff to type in a second language.</p>
+          <ul class="checks">
+            <li data-build data-say="Nepali today. English in the chart."><i>✓</i><span><strong style="color:var(--ink)">Supported today:</strong> Nepali → English</span></li>
+            <li data-build data-say="Built for the floor. Not a desk."><i>✓</i><span>Built for daily logging on the floor, not a desk</span></li>
+            <li data-build data-say="Protected speech infrastructure."><i>✓</i><span>Runs on protected speech infrastructure</span></li>
+          </ul>
+        </div>
+        <div class="mock" data-build data-say="Speak Nepali. Save English.">
+          <div class="mock-top"><div class="mock-title">Voice → English log</div><span class="mock-chip">Live capture</span></div>
+          <div class="voice-wave" aria-hidden="true">
+            <i style="height:14px"></i><i style="height:28px"></i><i style="height:46px"></i><i style="height:22px"></i>
+            <i style="height:38px"></i><i style="height:16px"></i><i style="height:34px"></i><i style="height:48px"></i>
+            <i style="height:20px"></i><i style="height:30px"></i><i style="height:12px"></i><i style="height:40px"></i>
+            <i style="height:24px"></i><i style="height:36px"></i><i style="height:18px"></i>
+          </div>
+          <div class="lang-pair">
+            <div class="lang-box"><b>Spoken (Nepali)</b>आज साँझ राम्रोसँग खाना खानुभयो…</div>
+            <img class="flow-gif" src="motion/flow-arrow.gif" alt="" data-gif />
+            <div class="lang-box"><b>Saved (English)</b><span class="typed">Ate dinner well this evening…</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="8500" data-pose="nod" data-say="Backup without a second chart." data-act="peek" data-targets=".dash-box">
+      <div class="bg"></div>
+      <div class="split">
+        <div>
+          <p class="kicker">Care · Respite <span class="badge-hot">Temporary access</span></p>
+          <h2>Backup coverage without a second chart</h2>
+          <p class="lead">A trained respite provider signs in for the individual they’re assigned to cover. The primary provider stays the documentation owner.</p>
+          <ul class="checks">
+            <li data-build data-say="Scoped. Not the whole agency."><i>✓</i><span>Scoped individual access — not the whole agency</span></li>
+            <li data-build data-say="Home guide plus the current MAR."><i>✓</i><span>Home guide + current MAR month in one package</span></li>
+            <li data-build data-say="Weekend, travel, illness, relief."><i>✓</i><span>Weekend, travel, illness, planned relief</span></li>
+          </ul>
+        </div>
+        <div class="dash-box" data-build data-say="Ready before they walk in.">
+          <div class="inner">
+            <div class="mock-top"><div class="mock-title">Respite coverage brief</div><span class="mock-chip">From primary</span></div>
+            <div class="chat">
+              <div class="bubble in"><strong>Home guide handover</strong><br/>Daily rhythm · Communication · Calming strategies · Food · Emergency contacts</div>
+              <div class="bubble file">Includes current MAR month + provider note</div>
+              <div class="bubble out"><strong>Sent to respite</strong><br/>Ready before they walk in the door.
+                <div class="typing" aria-hidden="true"><i></i><i></i><i></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="8500" data-pose="look" data-say="Ask He-M. Stay in the chart." data-act="peek" data-targets=".device">
+      <div class="bg"></div>
+      <div class="split-rev">
+        <figure class="device" data-build data-say="Ask He-M. Stay in the chart.">
+          <div class="chrome"><i></i><i></i><i></i><b>He-M advisor · live</b></div>
+          <div class="screen">
+            <img src="screens-1920/07-advisor.png" alt="He-M regulatory advisor in Care" />
+            <div class="glint"></div>
+          </div>
+        </figure>
+        <div>
+          <p class="kicker">Care · Team &amp; advisor</p>
+          <h2>Ask the team. Ask He-M. Stay in the chart.</h2>
+          <p class="lead">Messages stay with the individual. The advisor searches curated He-M guidance and answers with citations — not random internet chat.</p>
+          <ul class="checks">
+            <li data-build data-say="Messages stay with the individual."><i>✓</i><span>In-app care team messaging + file share</span></li>
+            <li data-build data-say="Answers with citations. Not the internet."><i>✓</i><span>RAG answers tied to source material</span></li>
+            <li data-build data-say="BAA-covered infrastructure."><i>✓</i><span>Runs on BAA-covered infrastructure</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="13000" data-pose="stamp" data-say="QA already sees next month." data-act="cycle" data-prop="glass" data-oy="-40">
+      <div class="bg"></div>
+      <div class="split">
+        <div>
+          <p class="kicker">Agency · Management <span class="badge-hot">Always ahead</span></p>
+          <h2>A QA compliance desk that opens items before they’re late</h2>
+          <p class="lead">Agency owner and QA share one sidenav. It does not correct the file — it reads a stored date, opens the item in the lead window, and sends it to the person who can fix it.</p>
+          <div class="feat-grid" style="grid-template-columns:1fr 1fr;margin-top:12px">
+            <article class="feat" style="min-height:auto" data-build data-say="Late now. This week. This month."><div class="ic qa">QA</div><strong>Compliance desk</strong><p>Late now, this week, this month — not each missed dose.</p></article>
+            <article class="feat" style="min-height:auto" data-build data-say="PM and nurse keep their own queues."><div class="ic">OPS</div><strong>Operations desk</strong><p>Program manager and nurse keep their own queues.</p></article>
+            <article class="feat" style="min-height:auto" data-build data-say="Assign in-app. Recheck closes it."><div class="ic">SEND</div><strong>In-app assign</strong><p>Provider, PM, or nurse trainer. Recheck closes it.</p></article>
+            <article class="feat" style="min-height:auto" data-build data-say="You set the lead days."><div class="ic">RULE</div><strong>Agency deadlines</strong><p>Lead days, TB, DMV, household stay — you set them.</p></article>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-top"><div class="mock-title">QA compliance desk</div><span class="mock-chip">Live checks</span></div>
+          <div class="qa-lane">
+            <span class="on">Now · late</span>
+            <span class="on">This week</span>
+            <span class="on">This month</span>
+          </div>
+          <div class="ahead" aria-hidden="true"><i></i></div>
+          <div class="qa-queue">
+            <div class="qa-item" data-build data-say="Fire drill. Not reviewed. Now."><span class="when now">Now</span><span>Fire drill · House 12 — not reviewed</span><b>→ PM</b></div>
+            <div class="qa-item" data-build data-say="Insurance is inside the lead."><span class="when now">Now</span><span>Car insurance · inside 60-day lead</span><b>→ DSP</b></div>
+            <div class="qa-item" data-build data-say="Weekly CPS. Goal not followed."><span class="when week">Week</span><span>Weekly CPS · goal not followed</span><b>→ PM</b></div>
+            <div class="qa-item" data-build data-say="Clock exceptions this week."><span class="when week">Week</span><span>Weekly time · clock exceptions</span><b>→ PM</b></div>
+            <div class="qa-item" data-build data-say="CPR. Thirty-two days out."><span class="when month">Month</span><span>CPR · 32 days to expiry</span><b>→ DSP</b></div>
+          </div>
+          <p class="tiny" style="opacity:1;margin-top:8px">Also on this desk: TB, DCYF, DMV, household background, homeowners / renters / condo, group home license, incidents, mileage, training, state inspection — twenty-plus workflows, one queue.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="12000" data-pose="cheer" data-say="Punch. Time. Pay." data-act="cycle" data-prop="clock">
+      <div class="bg"></div>
+      <p class="kicker">HR · Workforce</p>
+      <h2>Clock in. Earn time. Pay people. Same agency.</h2>
+      <p class="lead">pc-hr is built for healthcare shift reality — EVV, 8/80 overtime, sleep-shift rates — not a generic office timesheet.</p>
+      <div class="feat-grid">
+        <article class="feat" data-build data-say="Who. When. Where. Which individual."><div class="ic hr">EVV</div><strong>Cures Act punch</strong><p>Who, when, where, which individual — GPS + timestamp.</p></article>
+        <article class="feat" data-build data-say="Healthcare overtime. Not office OT."><div class="ic hr">8/80</div><strong>Healthcare overtime</strong><p>40-hour week or 8/80 exemption with blended rates.</p></article>
+        <article class="feat" data-build data-say="Sleep hours have their own rate."><div class="ic hr">NITE</div><strong>Sleep shifts</strong><p>Awake vs sleep hours, weekend differentials, on-call.</p></article>
+        <article class="feat" data-build data-say="Bank-ready. No per-head processor."><div class="ic hr">ACH</div><strong>NACHA export</strong><p>Bank-ready CCD+ / PPD files. No per-head processor.</p></article>
+        <article class="feat" data-build data-say="Submit. Approve. Correct."><div class="ic hr">TS</div><strong>Timesheets</strong><p>Submit, approve, correct — manager line of sight.</p></article>
+        <article class="feat" data-build data-say="Leave without a side spreadsheet."><div class="ic hr">PTO</div><strong>Leave</strong><p>Request, approve, adjust without a side spreadsheet.</p></article>
+        <article class="feat" data-build data-say="CPR, license, OIG — before they expire."><div class="ic hr">CRED</div><strong>Compliance vault</strong><p>CPR, license, background, OIG/SAM expiry alerts.</p></article>
+        <article class="feat" data-build data-say="Or keep the payroll shop you have."><div class="ic hr">SYNC</div><strong>ADP / Paychex</strong><p>Normalized timecards if you already have a payroll shop.</p></article>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="9000" data-pose="point" data-say="Fence to timesheet to bank file." data-act="cycle" data-prop="clock">
+      <div class="bg"></div>
+      <div class="split">
+        <div>
+          <p class="kicker">HR · Pay period</p>
+          <h2>From a geofenced punch to a bank file</h2>
+          <p class="lead">When a caregiver clocks in, Care can unlock the residents on that shift. Time lands on the timesheet. Payroll prepares, approves, and disburses.</p>
+          <div class="geo-wrap" data-build data-say="Inside the fence. Punch attaches.">
+            <img src="motion/geo-pulse.gif" alt="Geofence pulse" data-gif />
+            <div>
+              <strong style="display:block;font-family:Fraunces,Georgia,serif">Inside the fence</strong>
+              <span style="font-size:.82rem;color:var(--muted)">GPS + timestamp attach to the individual on that shift.</span>
+            </div>
+          </div>
+          <ul class="checks">
+            <li><i>✓</i><span>Attendance punch + correction with an audit row</span></li>
+            <li><i>✓</i><span>Managers see their reporting line — not the whole agency</span></li>
+          </ul>
+        </div>
+        <div class="mock">
+          <div class="mock-top"><div class="mock-title">Pay period #19</div><span class="mock-chip hr">EVV ledger</span></div>
+          <div class="pay">
+            <div class="pay-row" data-build data-say="House punch. On the timesheet."><span>Jamie Demo · House 12</span><em>7:58 AM in</em><b>OK</b></div>
+            <div class="pay-row" data-build data-say="CPS route. Same ledger."><span>Alex Demo · CPS route</span><em>8:04 AM in</em><b>OK</b></div>
+            <div class="pay-row" data-build data-say="Sleep overnight. Differential."><span>Sleep overnight · Riley</span><em>10:00 PM – 6:00 AM</em><b>DIFF</b></div>
+            <div class="pay-row" data-build data-say="Fourteen staff. Bank file ready."><span>NACHA PPD · 14 staff</span><em>Export ready</em><b>ACH</b></div>
+          </div>
+          <div class="arrow-track" style="margin-top:12px">
+            <svg viewBox="0 0 320 24"><path d="M8 12 H300 L292 6 M300 12 L292 18"/></svg>
+            <i class="packet"></i>
+          </div>
+          <p class="tiny" style="opacity:1;margin-top:8px">Demo data · not a live payroll run</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="12000" data-pose="look" data-say="A surveyor can scan this." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">LMS · Academy</p>
+      <h2>Training that survives a surveyor’s scan</h2>
+      <p class="lead">pc-lms is He-M 1201 DSP medication coursework with anti-cheat telemetry and tamper-evident QR certificates — not a video library with a quiz.</p>
+      <div class="feat-grid">
+        <article class="feat" data-build data-say="He-M 1201. Four modules."><div class="ic lms">1201</div><strong>NH He-M curriculum</strong><p>Four-module med-admin path aligned to BDS rules.</p></article>
+        <article class="feat" data-build data-say="Paste and tab-switch get flagged."><div class="ic lms">AI</div><strong>Anti-cheat telemetry</strong><p>Paste, tab-switch, and LLM-plugin signals.</p></article>
+        <article class="feat" data-build data-say="A surveyor can scan this."><div class="ic lms">QR</div><strong>Signed certificates</strong><p>Surveyor scans a phone. Live verification record.</p></article>
+        <article class="feat" data-build data-say="RN signs the mock pass."><div class="ic lms">RN</div><strong>Nurse trainer portal</strong><p>Mock med-pass sign-off and 2-year delegation.</p></article>
+        <article class="feat" data-build data-say="Ninety, sixty, thirty days out."><div class="ic lms">90d</div><strong>Renewal warnings</strong><p>90 / 60 / 30 day alerts before a cert expires.</p></article>
+        <article class="feat" data-build data-say="One matrix for the inspector."><div class="ic lms">CSV</div><strong>Survey transcript</strong><p>Agency-wide matrix for DHHS inspectors.</p></article>
+        <article class="feat" data-build data-say="CEUs by designation."><div class="ic lms">CEU</div><strong>CEU tracking</strong><p>Role-required training by designation.</p></article>
+        <article class="feat" data-build data-say="Same login as Care and HR."><div class="ic lms">SSO</div><strong>Same login</strong><p>Identity mints the LMS seat with Care and HR.</p></article>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="9000" data-pose="stamp" data-say="Live cert. Not a screenshot." data-act="scan" data-prop="scan">
+      <div class="bg"></div>
+      <div class="split-rev">
+        <div class="mock" data-build data-say="Scan the wall badge. Live record.">
+          <div class="mock-top"><div class="mock-title">DSP transcript · NH DHHS</div><span class="mock-chip lms">Proctored</span></div>
+          <div style="display:grid;grid-template-columns:88px 1fr;gap:12px;align-items:center;margin-bottom:12px">
+            <img src="motion/qr-scan.gif" width="88" height="88" alt="QR certificate scan" data-gif />
+            <div>
+              <strong style="font-family:Fraunces,Georgia,serif">Scan the wall badge</strong>
+              <p style="font-size:.8rem;color:var(--muted);margin-top:4px">Live verification record — not a screenshot taped to a binder.</p>
+            </div>
+          </div>
+          <div class="cert">
+            <div class="cert-row">
+              <div><strong>He-M 1201 · Admin principles</strong><span>4 hours · Final 98%</span><div class="bar"><i style="width:98%"></i></div></div>
+              <span class="okpill">Completed</span>
+            </div>
+            <div class="cert-row">
+              <div><strong>He-M 1201 · Safe storage &amp; counts</strong><span>3 hours · Final 95%</span><div class="bar"><i style="width:95%;animation-delay:.7s"></i></div></div>
+              <span class="okpill">Completed</span>
+            </div>
+            <div class="cert-row">
+              <div><strong>Clinical mock med pass</strong><span>RN trainer signed · QR minted</span><div class="bar"><i style="width:100%;animation-delay:1s"></i></div></div>
+              <img src="motion/stamp-check.gif" width="28" height="28" alt="" data-gif />
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="kicker">LMS · Proof</p>
+          <h2>A certificate a surveyor can trust</h2>
+          <p class="lead">The RN trainer evaluates the mock pass. Identity holds the instructor job. Care will not let an expired cert quietly keep giving meds.</p>
+          <ul class="checks">
+            <li data-build data-say="A human learner. Not a pasted essay."><i>✓</i><span>Human learner — not a pasted ChatGPT essay</span></li>
+            <li data-build data-say="Live record. Not a screenshot."><i>✓</i><span>QR on the wall is a live record, not a screenshot</span></li>
+            <li data-build data-say="Expired certs cannot keep giving meds."><i>✓</i><span>Expiry feeds the HR credential vault and Care med-pass gate</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="10000" data-pose="point" data-say="Doors that close." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">Identity</p>
+      <h2>One sign-in. Three products. Doors that close.</h2>
+      <p class="lead">pc-identity mints the job and the permission list. Care, HR, and LMS each check their own relationship.</p>
+      <div class="pipeline">
+        <div class="node" data-build data-say="One portal. One person.">Portal login</div>
+        <div class="arrow-track"><svg viewBox="0 0 72 24"><path d="M4 12 H54 L46 6 M54 12 L46 18"/></svg><i class="packet"></i></div>
+        <div class="node hot" data-build data-say="The job mints the permission list.">Token + scopes</div>
+        <div class="arrow-track"><svg viewBox="0 0 72 24"><path d="M4 12 H54 L46 6 M54 12 L46 18"/></svg><i class="packet" style="animation-delay:.45s"></i></div>
+        <div class="node" data-build data-say="Each product checks its own door.">Care · HR · LMS</div>
+      </div>
+      <div class="doors">
+        <article class="door" data-build data-say="The job. Not a shared password."><span class="pill">Door 1</span><h3 style="font-family:Fraunces,Georgia,serif;margin:.2rem 0 .3rem">The job</h3><p style="font-size:.8rem;color:var(--muted)">Catalog roles compile to product:domain:entity:action scopes.</p></article>
+        <article class="door" data-build data-say="A name on a chart is not a grant."><span class="pill">Door 2</span><h3 style="font-family:Fraunces,Georgia,serif;margin:.2rem 0 .3rem">The record</h3><p style="font-size:.8rem;color:var(--muted)">Care team, house, or reporting line. A name on a chart is a label, not a grant.</p></article>
+        <article class="door" data-build data-say="Who did what. Append-only."><span class="pill">Audit</span><h3 style="font-family:Fraunces,Georgia,serif;margin:.2rem 0 .3rem">The trail</h3><p style="font-size:.8rem;color:var(--muted)">Who assumed a role, who punched, who signed a cert — append-only.</p></article>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="9000" data-pose="nod" data-say="Every desk. The right doors." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">Access</p>
+      <h2>Every desk — with the right doors</h2>
+      <div class="roles">
+        <article class="role" data-build data-say="Leaders see the desk. Not every chart."><span class="pill">Agency</span><h3>Agency leaders</h3><p>Staff, individuals, forms, QA desk.</p></article>
+        <article class="role" data-build data-say="DSPs: logs, meds, punch, training."><span class="pill">Field</span><h3>Providers &amp; DSPs</h3><p>Logs, meds, punch, assigned training.</p></article>
+        <article class="role" data-build data-say="Respite is temporary. And scoped."><span class="pill">Backup</span><h3>Respite</h3><p>Temporary coverage + handover brief.</p></article>
+        <article class="role" data-build data-say="Nurses review. Trainers sign."><span class="pill">Clinical</span><h3>Nurses / trainers</h3><p>Reviews, mock med-pass, delegation.</p></article>
+        <article class="role" data-build data-say="Payroll sees their team only."><span class="pill">HR</span><h3>Payroll &amp; managers</h3><p>Timesheets, leave, ACH — their team only.</p></article>
+        <article class="role" data-build data-say="Guardians: consent and scoped updates."><span class="pill">Family</span><h3>Guardians</h3><p>Consent and scoped updates.</p></article>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="9000" data-pose="look" data-say="Patterns a board can hear." data-act="cycle">
+      <div class="bg"></div>
+      <p class="kicker">Trust</p>
+      <h2>Security patterns you can explain to a board</h2>
+      <p class="lead">HIPAA-oriented design: prove identity, limit access, protect data, leave an audit trail. A security scanner runs on every PR.</p>
+      <div class="shields">
+        <article class="shield" data-build data-say="Prove who is in the room."><div class="ringn">1</div><h3>Identity</h3><p>Hub-issued OIDC, MFA, session limits.</p></article>
+        <article class="shield" data-build data-say="Limit what they can touch."><div class="ringn">2</div><h3>Least privilege</h3><p>Minted scopes + assignment checks.</p></article>
+        <article class="shield" data-build data-say="Protect the data in motion and at rest."><div class="ringn">3</div><h3>Encryption</h3><p>In transit &amp; at rest; extra care for PHI fields.</p></article>
+        <article class="shield" data-build data-say="Leave a trail a board can hear."><div class="ringn">4</div><h3>Auditability</h3><p>Append-only logs of who touched what.</p></article>
+      </div>
+      <p class="tiny">Safeguards describe product design. Formal compliance also depends on your agency BAAs, policies, and environment.</p>
+    </section>
+
+    <section class="slide" data-ms="8000" data-pose="nod" data-say="Already shipped. Not slideware." data-act="peek" data-targets=".dash-box">
+      <div class="bg"></div>
+      <div class="split">
+        <div>
+          <p class="kicker">Why PatheraCare</p>
+          <h2>Not another generic EHR clone</h2>
+          <p class="lead">Purpose-built by a DSP, an SRE, and a systems architect who have already shipped Care, identity, HR, and LMS — not a slideware roadmap.</p>
+          <ul class="checks">
+            <li data-build data-say="Shipped: the MAR, the forms, the curriculum."><i>✓</i><span>The MAR, NH forms, and LMS curriculum</span></li>
+            <li data-build data-say="Shipped: the cloud and the HIPAA gate."><i>✓</i><span>The cloud, HIPAA gate, and forms engine</span></li>
+            <li data-build data-say="Shipped: identity, HR, and the portal."><i>✓</i><span>Identity, HR, portal, and commercial</span></li>
+          </ul>
+        </div>
+        <div class="dash-box" data-build data-say="Thirty minutes. Two people.">
+          <div class="inner" style="padding:22px">
+            <div class="mock-title" style="font-family:Fraunces,Georgia,serif;font-size:1.35rem;margin-bottom:8px;">30 minutes, two people</div>
+            <p style="color:var(--muted);font-size:.95rem;line-height:1.45;margin-bottom:14px;">Bring one coordinator and one provider. We’ll punch in, give a dose, file a log, and open a training transcript.</p>
+            <div class="pipeline" style="grid-template-columns:1fr 40px 1fr 40px 1fr;margin:0">
+              <div class="node" style="padding:10px 6px;font-size:.75rem">Punch</div>
+              <div class="arrow-track"><svg viewBox="0 0 40 24"><path d="M2 12 H30 L24 7 M30 12 L24 17"/></svg></div>
+              <div class="node hot" style="padding:10px 6px;font-size:.75rem">Dose</div>
+              <div class="arrow-track"><svg viewBox="0 0 40 24"><path d="M2 12 H30 L24 7 M30 12 L24 17"/></svg></div>
+              <div class="node" style="padding:10px 6px;font-size:.75rem">Cert</div>
+            </div>
+            <div class="cta-box" style="opacity:1;animation:none;margin-top:16px">
+              <a class="cta cta--primary" href="mailto:hello@patheracare.com?subject=PatheraCare%20platform%20demo">Book a platform demo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-ms="7500" data-pose="cheer" data-say="Bring two people. We'll show you." data-act="cta">
+      <div class="bg"></div>
+      <p class="kicker"><img src="motion/live-dot.gif" alt="" data-gif /> Next step</p>
+      <h2>See it. Try it. Stress-test it with your team.</h2>
+      <p class="lead">Walk MAR, EVV, and a He-M certificate in one sitting — then decide. Space to play, arrows to step one idea at a time.</p>
+      <div class="cta-box">
+        <a class="cta cta--primary" data-build data-say="Bring two people. We'll show you." href="mailto:hello@patheracare.com?subject=PatheraCare%20try%20%26%20test%20request">Request try &amp; test access</a>
+        <a class="cta cta--ghost" href="https://care.patheracare.com/login">Sign in to Care</a>
+        <a class="cta cta--ghost" href="https://www.patheracare.com">patheracare.com</a>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="controls">
+    <button class="ctrl" id="play" type="button" aria-label="Pause">❚❚</button>
+    <button class="ghost" id="prev" type="button">Prev</button>
+    <button class="ghost" id="next" type="button">Next</button>
+    <div class="progress" id="progress" title="Jump"><i id="bar"></i></div>
+    <div class="meta" id="meta">1 / 21</div>
+  </div>
+
+  <aside class="buddy" id="buddy" data-pose="wave" aria-hidden="true">
+    <div class="buddy-say on" id="buddySay">Hi. One login for the whole agency.</div>
+    <div class="buddy-mover" id="buddyMover">
+      <div class="buddy-fig">
+        <svg viewBox="0 0 110 108" fill="none">
+          <ellipse cx="48" cy="100" rx="22" ry="5" fill="#0f172a" opacity=".12"/>
+          <g class="feet">
+            <ellipse class="foot l" cx="36" cy="94" rx="8" ry="4" fill="#155e75"/>
+            <ellipse class="foot r" cx="58" cy="94" rx="8" ry="4" fill="#155e75"/>
+          </g>
+          <g class="head">
+            <circle cx="48" cy="58" r="32" fill="#0e7490"/>
+            <circle cx="48" cy="62" r="22" fill="#ccfbf1"/>
+            <circle cx="38" cy="36" r="9" fill="#fff"/>
+            <circle cx="58" cy="36" r="9" fill="#fff"/>
+            <circle class="pupil" cx="39" cy="37" r="3.2" fill="#0f172a"/>
+            <circle class="pupil" cx="59" cy="37" r="3.2" fill="#0f172a"/>
+            <rect class="lid" x="29" y="28" width="18" height="8" rx="4" fill="#0e7490"/>
+            <rect class="lid2" x="49" y="28" width="18" height="8" rx="4" fill="#0e7490"/>
+            <path d="M44 48 Q48 52 52 48" stroke="#0f766e" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="48" cy="18" r="5" fill="#f59e0b"/>
+            <path d="M48 8 V13" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+            <text x="48" y="21" text-anchor="middle" fill="#fff" font-size="8" font-weight="800" font-family="Source Sans 3, sans-serif">+</text>
+          </g>
+          <g class="arm">
+            <path d="M76 62 Q90 48 86 34" stroke="#155e75" stroke-width="7" stroke-linecap="round"/>
+            <circle cx="86" cy="32" r="6" fill="#0e7490"/>
+          </g>
+          <path d="M22 70 Q12 82 18 94" stroke="#155e75" stroke-width="7" stroke-linecap="round"/>
+          <g class="prop prop-glass">
+            <circle cx="96" cy="24" r="10" fill="rgba(255,255,255,.4)" stroke="#0f172a" stroke-width="3"/>
+            <path d="M103 32 L112 44" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <g class="prop prop-stamp">
+            <circle cx="96" cy="20" r="12" fill="#10b981"/>
+            <path d="M90 20 l4 4 8-9" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          </g>
+          <g class="prop prop-clock">
+            <circle cx="96" cy="20" r="11" fill="#fff" stroke="#7c3aed" stroke-width="2.5"/>
+            <path d="M96 20 V12 M96 20 H101" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <g class="prop prop-scan">
+            <rect x="86" y="10" width="22" height="22" rx="3" fill="#fff" stroke="#c2410c" stroke-width="2"/>
+            <path class="scan-beam" d="M88 21 H106" stroke="#0e7490" stroke-width="2"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </aside>
+  </div>
+  <p class="caption">Space play/pause · Arrows step one idea at a time (then the next slide) · Character points at the live beat.</p>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const playBtn = document.getElementById("play");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+    const bar = document.getElementById("bar");
+    const meta = document.getElementById("meta");
+    const progress = document.getElementById("progress");
+    const chapterDots = [...document.querySelectorAll("#chapters b")];
+    const buddy = document.getElementById("buddy");
+    const buddySay = document.getElementById("buddySay");
+    const buddyMover = document.getElementById("buddyMover");
+    const stageEl = document.getElementById("stage");
+    let index = 0, playing = true, startedAt = performance.now(), elapsed = 0;
+    let buddyTimer = 0, skateTimer = 0, buddySeq = 0, beat = 0;
+    const duration = (i) => Number(slides[i].dataset.ms || 8000);
+    const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const BUILD_SEL = "[data-build]";
+    function buildsOf(slide) {
+      return [...slide.querySelectorAll(BUILD_SEL)].filter((el, i, arr) => !arr.some((other) => other !== el && other.contains(el)));
+    }
+
+    function restartGifs(slide) {
+      slide.querySelectorAll("img[data-gif]").forEach((img) => {
+        const src = img.getAttribute("src");
+        img.setAttribute("src", src.split("?")[0] + "?t=" + Date.now());
+      });
+    }
+    function spark(x, y) {
+      const s = document.createElement("i");
+      s.className = "buddy-spark";
+      s.style.left = `${x}px`;
+      s.style.top = `${y}px`;
+      stageEl.appendChild(s);
+      setTimeout(() => s.remove(), 520);
+    }
+    function placeSay(x, y) {
+      const maxX = stageEl.clientWidth - 158;
+      const below = y < 64;
+      buddySay.style.left = `${Math.max(8, Math.min(x + 72, maxX))}px`;
+      buddySay.style.top = `${Math.max(8, below ? y + 92 : y - 44)}px`;
+    }
+    function followOrbitSay() {
+      if (!buddyMover.classList.contains("orbiting")) return;
+      const sr = stageEl.getBoundingClientRect();
+      const r = buddyMover.getBoundingClientRect();
+      placeSay(r.left - sr.left, r.top - sr.top);
+      requestAnimationFrame(followOrbitSay);
+    }
+    function moveMover(x, y, { scale = 0.78, flip = false, orbit = false, sing = false } = {}) {
+      buddyMover.classList.toggle("orbiting", orbit);
+      buddyMover.classList.toggle("singing", sing);
+      buddyMover.classList.add("walking");
+      buddyMover.style.left = `${x}px`;
+      buddyMover.style.top = `${y}px`;
+      buddyMover.style.transform = orbit ? "" : `scale(${flip ? -scale : scale}, ${scale})`;
+      placeSay(x, y);
+      spark(x + 46, y + 78);
+      clearTimeout(moveMover._t);
+      moveMover._t = setTimeout(() => buddyMover.classList.remove("walking"), 680);
+    }
+    function toEl(el, opts = {}) {
+      const sr = stageEl.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      const ox = opts.ox || 0;
+      const oy = opts.oy ?? -72;
+      const x = r.left - sr.left + r.width * 0.55 + ox - 48;
+      const y = r.top - sr.top + oy;
+      const flip = opts.flip ?? (r.left > sr.left + sr.width * 0.55);
+      moveMover(
+        Math.max(4, Math.min(x, sr.width - 118)),
+        Math.max(4, Math.min(y, sr.height - 118)),
+        { scale: opts.scale || 0.72, flip, sing: opts.sing }
+      );
+    }
+    function pointAt(el, slide) {
+      if (!el) return;
+      const act = slide.dataset.act || "";
+      buddyMover.classList.remove("orbiting", "singing");
+      if (act === "orbit" && el.classList.contains("orbit-stage")) {
+        const sr = stageEl.getBoundingClientRect();
+        const r = el.getBoundingClientRect();
+        moveMover(r.left - sr.left + r.width / 2 - 48, r.top - sr.top + r.height / 2 - 54, { orbit: true });
+        requestAnimationFrame(followOrbitSay);
+        buddy.dataset.pose = "wave";
+        return;
+      }
+      const opts = {
+        oy: Number(slide.dataset.oy || -64),
+        scale: Number(slide.dataset.scale || 0.68),
+        ox: Number(slide.dataset.ox || 0),
+        sing: act === "sing"
+      };
+      if (act === "peek") { opts.oy = -26; opts.ox = 36; opts.scale = 0.6; opts.flip = false; }
+      if (act === "sing") { opts.oy = -18; opts.scale = 0.78; }
+      if (act === "scan") { opts.oy = -8; opts.scale = 0.68; }
+      if (act === "cta") { opts.oy = -88; opts.scale = 0.82; }
+      buddy.dataset.pose = slide.dataset.pose || (act === "cta" ? "cheer" : "point");
+      toEl(el, opts);
+    }
+    function applyBeat(slide, n) {
+      const items = buildsOf(slide);
+      if (!items.length) return;
+      const at = Math.max(0, Math.min(n, items.length - 1));
+      items.forEach((el, i) => {
+        el.classList.remove("pre", "onbeat", "dim", "lit");
+        if (i > at) el.classList.add("pre");
+        else if (i === at) el.classList.add("onbeat", "lit");
+        else el.classList.add("onbeat", "dim");
+      });
+      const line = items[at].dataset.say || slide.dataset.say || "";
+      if (line && buddySay.textContent !== line) {
+        buddySay.classList.remove("on");
+        void buddySay.offsetWidth;
+        buddySay.textContent = line;
+        buddySay.classList.add("on");
+      }
+      pointAt(items[at], slide);
+    }
+    function beatCount(i) {
+      return Math.max(1, buildsOf(slides[i]).length);
+    }
+    function beatMs(i) {
+      return duration(i) / beatCount(i);
+    }
+    function paintBuddy(slide) {
+      if (!buddy) return;
+      clearInterval(buddyTimer);
+      clearTimeout(skateTimer);
+      document.querySelectorAll(".lit").forEach((el) => el.classList.remove("lit"));
+      buddy.dataset.prop = slide.dataset.prop || "";
+      buddySay.classList.remove("on");
+      void buddySay.offsetWidth;
+      buddySay.textContent = slide.dataset.say || "";
+      buddySay.classList.add("on");
+    }
+    function paintChapters() {
+      let current = 0;
+      chapterDots.forEach((dot, i) => {
+        if (index <= Number(dot.dataset.upto)) { if (current === 0 && i > 0) current = i; }
+      });
+      let chosen = 0;
+      chapterDots.forEach((dot, i) => {
+        if (index <= Number(dot.dataset.upto) && chosen === 0) chosen = i;
+        if (index > Number(chapterDots[chapterDots.length - 1].dataset.upto)) chosen = chapterDots.length - 1;
+      });
+      for (let i = 0; i < chapterDots.length; i++) {
+        if (index <= Number(chapterDots[i].dataset.upto)) { chosen = i; break; }
+        chosen = i;
+      }
+      chapterDots.forEach((d, i) => d.classList.toggle("on", i === chosen));
+    }
+    function show(i, startBeat = 0) {
+      slides.forEach((s, n) => {
+        s.classList.remove("active", "leaving");
+        if (n === i) s.classList.add("active");
+        else if (n === index && n !== i) s.classList.add("leaving");
+        if (n !== i) buildsOf(s).forEach((el) => el.classList.remove("pre", "onbeat", "dim", "lit"));
+      });
+      index = i;
+      beat = Math.max(0, Math.min(startBeat, beatCount(i) - 1));
+      meta.textContent = beatCount(i) > 1 ? `${i + 1} / ${slides.length} · ${beat + 1}/${beatCount(i)}` : `${i + 1} / ${slides.length}`;
+      elapsed = 0;
+      startedAt = performance.now();
+      restartGifs(slides[i]);
+      paintBuddy(slides[i]);
+      paintChapters();
+      requestAnimationFrame(() => applyBeat(slides[i], beat));
+      paint();
+    }
+    function nextStep() {
+      if (beat < beatCount(index) - 1) {
+        beat += 1;
+        elapsed = 0;
+        startedAt = performance.now();
+        applyBeat(slides[index], beat);
+        meta.textContent = `${index + 1} / ${slides.length} · ${beat + 1}/${beatCount(index)}`;
+        paint();
+        return;
+      }
+      if (index < slides.length - 1) show(index + 1);
+      else { playing = false; playBtn.textContent = "↻"; playBtn.setAttribute("aria-label", "Replay"); }
+    }
+    function prevStep() {
+      if (beat > 0) {
+        beat -= 1;
+        elapsed = 0;
+        startedAt = performance.now();
+        applyBeat(slides[index], beat);
+        meta.textContent = `${index + 1} / ${slides.length} · ${beat + 1}/${beatCount(index)}`;
+        paint();
+        return;
+      }
+      if (index > 0) show(index - 1, beatCount(index - 1) - 1);
+    }
+    function paint() {
+      const total = slides.reduce((s, _, i) => s + duration(i), 0);
+      let done = 0; for (let i = 0; i < index; i++) done += duration(i);
+      done += beat * beatMs(index) + Math.min(elapsed, beatMs(index));
+      bar.style.width = `${(done / total) * 100}%`;
+    }
+    function tick(now) {
+      if (playing) {
+        elapsed = now - startedAt; paint();
+        if (elapsed >= beatMs(index)) nextStep();
+      }
+      requestAnimationFrame(tick);
+    }
+    function toggle() {
+      if (!playing && index === slides.length - 1 && elapsed >= duration(index) - 40) {
+        playing = true; playBtn.textContent = "❚❚"; show(0); return;
+      }
+      playing = !playing;
+      if (playing) { startedAt = performance.now() - elapsed; playBtn.textContent = "❚❚"; playBtn.setAttribute("aria-label", "Pause"); }
+      else { playBtn.textContent = "▶"; playBtn.setAttribute("aria-label", "Play"); }
+    }
+    playBtn.addEventListener("click", toggle);
+    prevBtn.addEventListener("click", () => { playing = false; playBtn.textContent = "▶"; prevStep(); });
+    nextBtn.addEventListener("click", () => { playing = false; playBtn.textContent = "▶"; nextStep(); });
+    progress.addEventListener("click", (e) => {
+      const rect = progress.getBoundingClientRect();
+      const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+      const total = slides.reduce((s, _, i) => s + duration(i), 0);
+      let target = pct * total, i = 0;
+      while (i < slides.length - 1 && target > duration(i)) { target -= duration(i); i++; }
+      show(i); elapsed = target; startedAt = performance.now() - elapsed; paint();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") { e.preventDefault(); toggle(); }
+      else if (e.code === "ArrowRight") nextBtn.click();
+      else if (e.code === "ArrowLeft") prevBtn.click();
+      else if (e.code === "Escape") { playing = false; playBtn.textContent = "▶"; }
+    });
+    show(0); requestAnimationFrame(tick);
+  </script>
+</body>
+</html>
